@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFHNAS - Fortunato F. Halili National Agricultural School</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Auth Form Styles */
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo"><img src="assets-image/logo.png" alt="FFHNAS Logo"></div>
+            <div class="loading-spinner"></div>
+            <p>Loading FFHNAS...</p>
+        </div>
+    </div>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <button class="back-to-top" id="backToTop">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <header class="header" id="header">
+        <nav class="navbar">
+            <a href="#home" class="nav-brand">
+                <div class="nav-logo"><img src="assets-image/logo.png" alt="logo"></div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-name">FFHNAS</span>
+                    <span class="nav-brand-sub">Senior High School</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#announcements" class="nav-link">Announcements</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#programs" class="nav-link">Programs</a>
+                <a href="#facilities" class="nav-link">Facilities</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-login" onclick="openLoginModal()">Login</button>
+                <button class="btn-enroll-nav" onclick="openEnrollModal()">Enroll Now</button>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="mobile-brand">
+                <img src="assets-image/logo.png" alt="logo" width="40">
+                <span>FFHNAS</span>
+            </div>
+            <button class="mobile-close" id="mobileClose">&times;</button>
+        </div>
+        <div class="mobile-links">
+            <a href="#home" class="mobile-link">Home</a>
+            <a href="#announcements" class="mobile-link">Announcements</a>
+            <a href="#about" class="mobile-link">About</a>
+            <a href="#programs" class="mobile-link">Programs</a>
+            <a href="#facilities" class="mobile-link">Facilities</a>
+            <a href="#contact" class="mobile-link">Contact</a>
+        </div>
+        <div class="mobile-buttons">
+            <button class="btn-login-mobile" onclick="openLoginModal()">Login</button>
+            <button class="btn-enroll-mobile" onclick="openEnrollModal()">Enroll Now</button>
+        </div>
+    </div>
+
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-decorations">
+            <div class="hero-blob hero-blob-1"></div>
+            <div class="hero-blob hero-blob-2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <div class="hero-badge-icon">🌾</div>
+                <span>Excellence in Agricultural Education</span>
+            </div>
+            <h1 class="hero-title">
+                Shape Your Future at<br>
+                <span class="hero-highlight">SHS FFHNAS</span>
+            </h1>
+            <p class="hero-subtitle">
+                Premier Senior High School offering <span class="hero-accent">10 specialized strands</span> to prepare you for college and career success.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-enroll" onclick="openEnrollModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                    Enroll Now for SY 2026-2027
+                </button>
+                <button class="btn-tour" onclick="document.getElementById('facilities').scrollIntoView({behavior: 'smooth'})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                    Take a Virtual Tour
+                </button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <div class="stat-value" data-target="600">0</div>
+                    <div class="stat-label">Students Enrolled</div>
+                </div>
+                <div class="stat-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    <div class="stat-value" data-target="10">0</div>
+                    <div class="stat-label">Specialized Strands</div>
+                </div>
+                <div class="stat-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                    <div class="stat-value" data-target="40">0</div>
+                    <div class="stat-label">Teachers & Administrator</div>
+                </div>
+                <div class="stat-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
+                    <div class="stat-value" data-target="98">0</div>
+                    <div class="stat-label">% Graduating Rate</div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+        </div>
+    </section>
+
+    <section id="announcements" class="section announcements-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Latest Updates
+                </span>
+                <h2 class="section-title">Announcements</h2>
+                <p class="section-description">Stay updated with our latest news and events</p>
+            </div>
+            <div class="announcements-grid" id="announcementsGrid"></div>
+            <div class="section-footer">
+                <button class="btn-outline" onclick="openAllAnnouncements()">
+                    View All Announcements
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcementModal" class="modal">
+        <div class="modal-backdrop" onclick="closeAnnouncementModal()"></div>
+        <div class="modal-container announcement-modal-container">
+            <button class="modal-close" onclick="closeAnnouncementModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div id="announcementModalContent"></div>
+        </div>
+    </div>
+
+    <div id="allAnnouncementsModal" class="modal">
+        <div class="modal-backdrop" onclick="closeAllAnnouncementsModal()"></div>
+        <div class="modal-container all-announcements-modal">
+            <button class="modal-close" onclick="closeAllAnnouncementsModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="all-announcements-content">
+                <div class="all-announcements-header">
+                    <h2>All Announcements</h2>
+                </div>
+                <div class="all-announcements-grid" id="allAnnouncementsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="section about-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                    About Us
+                </div>
+                <h2 class="section-title">Know More About FFHNAS</h2>
+                <p class="section-description">Learn about our mission, vision, and commitment to excellence in education</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-tabs">
+                    <button class="about-tab active" data-tab="history">
+                        <div class="tab-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                        </div>
+                        <span>Our History</span>
+                    </button>
+
+                    <button class="about-tab" data-tab="mission">
+                        <div class="tab-icon rose">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                        </div>
+                        <span>Mission & Vision</span>
+                    </button>
+
+                    <!-- NEW: Policies & Rules Tab -->
+                    <button class="about-tab" data-tab="policies">
+                        <div class="tab-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                        </div>
+                        <span>Policies & Rules</span>
+                    </button>
+
+                    <button class="about-tab" data-tab="organization">
+                        <div class="tab-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <span>Organization</span>
+                    </button>
+                </div>
+
+                <div class="about-panels">
+                    <div id="panel-history" class="about-panel active">
+                        <div class="panel-header blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                            Our Rich History
+                        </div>
+                        <div class="panel-content">
+                            <p><strong>Fortunato F. Halili National Agricultural School (FFHNAS)</strong> traces its roots to the former Philippine National Agricultural School located in Barangay Guyong, Santa Maria, Bulacan.</p>
+                            <p>The institution was officially renamed through <strong>Republic Act No. 7331</strong>, approved on March 31, 1992, in honor of <strong>Fortunato F. Halili</strong>, a respected leader and public servant in Bulacan. This marked an important milestone in strengthening the school's identity as a national agricultural institution.</p>
+                            <p>Since its establishment, FFHNAS has remained committed to providing quality agricultural education and practical training to students. The school was founded to support the agricultural needs of the community and continues to promote sustainable farming, technical skills development, and academic excellence.</p>
+                            <p>Over the decades, the school expanded its programs to include Junior High School, Senior High School, and technical-vocational courses, while preserving its strong agricultural foundation.</p>
+                            <p><strong>Key Milestones:</strong></p>
+                            <p>
+                                • <strong>Pre-1992:</strong> Known as Philippine National Agricultural School<br>
+                                • <strong>March 31, 1992:</strong> Renamed through Republic Act No. 7331<br>
+                                • <strong>2016:</strong> Implementation of the K–12 Senior High School Program<br>
+                                • <strong>Present:</strong> Continues to serve as a leading agricultural education institution in Santa Maria, Bulacan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="panel-mission" class="about-panel">
+                        <div class="panel-header rose">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                            Mission & Vision
+                        </div>
+                        <div class="panel-content">
+                            <p><strong>Our Vision:</strong></p>
+                            <p>We dream of Filipinos who passionately love their country and whose values and competencies enable them to realize their full potential and contribute meaningfully to building the nation.</p>
+                            <p><strong>Our Mission:</strong></p>
+                            <p>To protect and promote the right of every Filipino to quality, equitable, culture-based, and complete basic education where:</p>
+                            <p>
+                                • Students learn in a child-friendly, gender-sensitive, safe, and motivating environment<br>
+                                • Teachers facilitate learning and constantly nurture every learner<br>
+                                • Administrators and staff ensure an enabling and supportive environment for effective learning<br>
+                                • Family, community, and stakeholders are actively engaged in developing life-long learners
+                            </p>
+                            <p><strong>Core Values:</strong></p>
+                            <p>Maka-Diyos • Maka-Tao • Makakalikasan • Makabansa</p>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Policies & Rules Panel -->
+                    <div id="panel-policies" class="about-panel">
+                        <div class="panel-header blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            School Policies & Rules
+                        </div>
+                        <div class="panel-content">
+    <p><strong>1. Attendance and Punctuality</strong></p>
+    <p>Students are expected to attend all classes regularly and on time. Absences exceeding 20% of the total number of school days in a semester may result in being dropped from the subject.</p>
+
+    <p><strong>2. Dress Code and Uniform</strong></p>
+    <p>Students must wear the prescribed school uniform from Monday to Friday. The uniform must be clean, properly worn, and include the school ID at all times while on campus.</p>
+
+    <p><strong>3. Academic Integrity</strong></p>
+    <p>Cheating, plagiarism, and any form of academic dishonesty are strictly prohibited. Students who violate these policies will face appropriate disciplinary action.</p>
+
+    <p><strong>4. Use of Mobile Devices</strong></p>
+    <p>Mobile phones and other electronic devices should be kept on silent mode during class hours. Devices must not be used for non-academic purposes during class time.</p>
+
+    <p><strong>5. Campus Conduct</strong></p>
+    <p>Students must maintain respectful behavior toward teachers, staff, and fellow students at all times. Vandalism, bullying, fighting, and any form of harassment are prohibited.</p>
+
+    <p><strong>6. School Property</strong></p>
+    <p>Students are responsible for the proper use and care of school facilities, equipment, and materials. Any damage caused must be reported immediately and may result in repair or replacement costs.</p>
+
+    <p><strong>7. Prohibited Items</strong></p>
+    <p>Bringing dangerous weapons, illegal substances, alcohol, cigarettes, and other prohibited items on campus is strictly forbidden and will result in immediate disciplinary action.</p>
+
+    <p><strong>8. Visitor Policy</strong></p>
+    <p>All visitors must register at the security office and obtain a visitor's pass before entering the campus. Students are not allowed to bring unauthorized visitors onto school premises.</p>
+</div>
+                    </div>
+
+                    <div id="panel-organization" class="about-panel">
+                        <div class="panel-header green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            School Organization
+                        </div>
+                        <div class="panel-content" id="orgChartContent">
+                            <p><strong>School Administration</strong></p>
+                            <p>Principal: Mrs. Elsilda P. Bunagan<br>
+                            Assistant Principal: Mrs. Melgee Canare</p>
+                            <p><strong>Department Heads</strong></p>
+                            <p>Academic Affairs: Example Academic Affair<br>
+                            Student Affairs: Mr. Example Student Affair<br>
+                            TVL Department: Mr. Example TVL Department</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section id="programs" class="section programs-section">
+        <div class="container">
+            <div class="section-header light">
+                <div class="section-badge" style="background: rgba(255,255,255,0.2); color: white;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    Our Programs
+                </div>
+                <h2 class="section-title">Choose Your Path to Success</h2>
+                <p class="section-description">10 specialized strands designed to prepare you for college and career</p>
+            </div>
+            <div class="programs-marquee-wrapper">
+                <div class="programs-marquee">
+                    <div class="program-pill blue" data-program="0">STEM</div>
+                    <div class="program-pill cyan" data-program="1">ICT</div>
+                    <div class="program-pill amber" data-program="2">ABM</div>
+                    <div class="program-pill pink" data-program="3">HUMSS</div>
+                    <div class="program-pill slate" data-program="4">TVL-IA</div>
+                    <div class="program-pill blue" data-program="0">STEM</div>
+                    <div class="program-pill cyan" data-program="1">ICT</div>
+                    <div class="program-pill amber" data-program="2">ABM</div>
+                    <div class="program-pill pink" data-program="3">HUMSS</div>
+                    <div class="program-pill slate" data-program="4">TVL-IA</div>
+                </div>
+                <div class="programs-marquee reverse">
+                    <div class="program-pill green" data-program="5">TVL-AFA</div>
+                    <div class="program-pill red" data-program="6">TVL-HE</div>
+                    <div class="program-pill purple" data-program="7">Arts & Design</div>
+                    <div class="program-pill orange" data-program="8">Sports</div>
+                    <div class="program-pill teal" data-program="9">ALS</div>
+                    <div class="program-pill green" data-program="5">TVL-AFA</div>
+                    <div class="program-pill red" data-program="6">TVL-HE</div>
+                    <div class="program-pill purple" data-program="7">Arts & Design</div>
+                    <div class="program-pill orange" data-program="8">Sports</div>
+                    <div class="program-pill teal" data-program="9">ALS</div>
+                </div>
+            </div>
+            <p class="programs-hint">💡 Click any strand to learn more about subjects and career opportunities</p>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="section facilities-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    Facilities
+                </div>
+                <h2 class="section-title">Senior High School Facilities</h2>
+                <p class="section-description">Modern infrastructure and equipment to support quality education</p>
+            </div>
+            <div class="facilities-carousel-wrapper">
+                <button class="carousel-nav prev" id="facilitiesPrev">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <div class="facilities-carousel" id="facilitiesCarousel"></div>
+                <button class="carousel-nav next" id="facilitiesNext">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+            <p class="facilities-hint">👆 Swipe or click to explore more facilities</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Contact Us
+                </div>
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-description">We're here to answer your questions</p>
+            </div>
+            <div class="contact-content">
+                <div>
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7562.9738446696!2d120.97634!3d14.835618!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397ac3cd376c7f1%3A0xff644246a3ac0776!2sFortunato%20F.%20Halili%20National%20Agricultural%20School!5e1!3m2!1sen!2sus!4v1772819794603!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                    <div class="contact-cards">
+                        <div class="contact-card">
+                            <div class="contact-card-icon red">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </div>
+                            <h4>Address</h4>
+                            <p>Guyong, Santa Maria, Bulacan</p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-card-icon green">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            </div>
+                            <h4>Phone</h4>
+                            <p>(045) 123-4567</p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-card-icon blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            </div>
+                            <h4>Email</h4>
+                            <p>300739@deped.gov.ph</p>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-card-icon amber">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <h4>Office Hours</h4>
+                            <p>Mon-Fri: 7AM - 5PM</p>
+                        </div>
+                    </div>
+                    <button class="btn-directions" onclick="window.open('https://www.google.com/maps/dir/Immaculate+Conception+Church,+FFHNAS+Rd,+Santa+Maria,+Bulacan/Fortunato+F.+Halili+National+Agricultural+School,+Guyong+Santa+Maria+Bulacan,+3022/@14.835201,120.977113,217m/data=!3m1!1e3!4m13!4m12!1m5!1m1!1s0x3397ac2344d50c7f:0xe31bbbddde7f4781!2m2!1d120.9769445!2d14.8347845!1m5!1m1!1s0x3397ac3cd376c7f1:0xff644246a3ac0776!2m2!1d120.9763401!2d14.8356182?entry=ttu&g_ep=EgoyMDI2MDIxOC4wIKXMDSoASAFQAw%3D%3D', '_blank')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                        Get Directions
+                    </button>
+                </div>
+                <div class="contact-form-card">
+                    <h3>Send Us a Message</h3>
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+    <label>LRN (Learner Reference Number)</label>
+    <input type="text" name="lrn" maxlength="12" placeholder="12-digit LRN (optional)">
+</div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select name="subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="enrollment">Enrollment Inquiry</option>
+                                <option value="general">General Question</option>
+                                <option value="facilities">Facilities</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="assets-image/logo.png" alt="logo" width="40">
+                    <div>
+                        <h3>FFHNAS</h3>
+                        <p>Senior High School</p>
+                    </div>
+                </div>
+                <p class="footer-desc">Excellence in agricultural and technical-vocational education since 2016. Building a brighter future for Filipino youth.</p>
+                <div class="footer-social">
+                    <a href="https://web.facebook.com/ffhnas300739" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#programs">Programs</a></li>
+                    <li><a href="#facilities">Facilities</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-programs">
+                <h4>Programs</h4>
+                <div class="program-tags">
+                    <span>STEM</span><span>ICT</span><span>ABM</span><span>HUMSS</span>
+                    <span>TVL-IA</span><span>TVL-AFA</span><span>TVL-HE</span>
+                    <span>A&D</span><span>Sports</span><span>ALS</span>
+                </div>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Guyong, Santa Maria, Bulacan
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        (045) 123-4567
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        300739@deped.gov.ph
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 FFHNAS. All rights reserved.</p>
+            <div class="made-with">Made with <span style="color: #10b981;">❤</span> by FFHNAS ICT Team</div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="programModal" class="modal">
+        <div class="modal-backdrop" onclick="closeProgramModal()"></div>
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeProgramModal()">&times;</button>
+            <div class="modal-body" id="programModalBody"></div>
+        </div>
+    </div>
+
+    <div id="facilityModal" class="modal">
+        <div class="modal-backdrop" onclick="closeFacilityModal()"></div>
+        <div class="modal-container facility-modal-container">
+            <button class="modal-close" onclick="closeFacilityModal()">&times;</button>
+            <button class="modal-nav prev" onclick="navigateFacility(-1)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="modal-nav next" onclick="navigateFacility(1)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            <div class="facility-modal-content">
+                <div class="facility-modal-image" id="facilityModalImage"></div>
+                <div class="facility-modal-body" id="facilityModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="enrollModal" class="modal">
+        <div class="modal-backdrop" onclick="closeEnrollModal()"></div>
+        <div class="modal-container enroll-modal">
+            <button class="modal-close" onclick="closeEnrollModal()">&times;</button>
+            <div id="enrollContent"></div>
+        </div>
+    </div>
+
+    <!-- Login/Register Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-backdrop" onclick="closeLoginModal()"></div>
+        <div class="modal-container login-modal">
+            <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            <div class="login-content">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    </div>
+                    <h2>Welcome to FFHNAS</h2>
+                    <p>Access your school portal</p>
+                </div>
+                <div class="login-tabs">
+                    <button class="login-tab active" data-auth-tab="login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+                        Login
+                    </button>
+                    <button class="login-tab" data-auth-tab="register">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                        Register
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="loginEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    </div>
+                    <div class="login-tabs" style="margin-bottom: 1.5rem;">
+                        <button type="button" class="login-tab active" data-type="student">Student</button>
+                        <button type="button" class="login-tab" data-type="teacher">Teacher</button>
+                        <button type="button" class="login-tab" data-type="admin">Admin</button>
+                    </div>
+                    <button type="submit" class="btn-login-submit" id="loginSubmitBtn">
+                        Sign In as Student
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </form>
+
+                <form class="auth-form" id="registerForm">
+    <div class="form-row">
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="regFirstName" required placeholder="First name">
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="regLastName" required placeholder="Last name">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="regEmail" required placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" required placeholder="Create a password">
+    </div>
+    <div class="form-group">
+        <label>Register As</label>
+        <select id="regRole" required>
+            <option value="">Select Role</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Administrator</option>
+        </select>
+    </div>
+    <div class="form-group" id="adminKeyGroup" style="display:none;">
+        <label>Admin Key</label>
+        <input type="password" id="regAdminKey" placeholder="Enter admin secret key">
+        <small style="color: var(--text-light); font-size: 0.85rem;">Contact school administration for the admin key</small>
+    </div>
+    <div class="form-group" id="regLrnGroup" style="display:none;">
+        <label>LRN (Learner Reference Number) *</label>
+        <input type="text" id="regLrn" name="lrn" maxlength="12" placeholder="12-digit LRN">
+    </div>
+    
+<!-- Address (student only) -->
+<div class="form-group" id="regAddressGroup" style="display:none;">
+    <label>Complete Address</label>
+    <input type="text" class="form-input" id="regAddress" placeholder="House No., Street, Barangay, City">
+</div>
+
+<!-- Guardian Info (student only) -->
+<div class="form-group" id="regGuardianGroup" style="display:none;">
+    <label>Parent/Guardian Name</label>
+    <input type="text" class="form-input" id="regGuardianName" placeholder="Full name of parent or guardian">
+    <label style="margin-top:0.75rem;display:block;">Parent/Guardian Contact</label>
+    <input type="text" class="form-input" id="regGuardianContact" placeholder="Contact number">
+</div>
+    <div id="teacherFieldsGroup" style="display:none;">
+        <div class="form-group">
+            <label>Employee ID</label>
+            <input type="text" id="regEmployeeId" placeholder="e.g. T-2024-001">
+        </div>
+        <div class="form-group">
+            <label>Contact Number</label>
+            <input type="text" id="regContact" placeholder="e.g. +63 917 123 4567">
+        </div>
+        <div class="form-group">
+            <label>Department / Strand</label>
+            <input type="text" id="regDepartment" placeholder="e.g. STEM, ICT, TVL">
+        </div>
+    </div>
+    <button type="submit" class="btn-login-submit">
+        Create Account
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </button>
+</form>
+
+                <div class="login-footer">
+                    <p>Forgot your password? <a href="#">Reset here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+        function loadAnnouncementsFromAdmin() {
+            const announcements = JSON.parse(localStorage.getItem('ffhnas_announcements') || '[]');
+            const container = document.getElementById('announcements-container');
+            if (!container) return;
+            if (announcements.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 2rem;">No announcements at this time.</p>';
+                return;
+            }
+            container.innerHTML = announcements.map(announcement => `
+                <div class="announcement-card" style="background: white; padding: 1.5rem; border-radius: 1rem; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px; background: ${getCategoryColor(announcement.category)}; color: ${getCategoryTextColor(announcement.category)};">
+                            ${announcement.category.toUpperCase()}
+                        </span>
+                        <span style="font-size: 0.8rem; color: #94a3b8;">${new Date(announcement.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem;">${announcement.title}</h3>
+                    <p style="color: #475569; line-height: 1.6; margin-bottom: 1rem;">${announcement.content}</p>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">Posted by ${announcement.creator_name || 'Administrator'}</div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryColor(category) {
+            const colors = { general: 'rgba(100, 116, 139, 0.1)', academic: 'rgba(16, 185, 129, 0.1)', event: 'rgba(139, 92, 246, 0.1)', urgent: 'rgba(239, 68, 68, 0.1)' };
+            return colors[category] || colors.general;
+        }
+
+        function getCategoryTextColor(category) {
+            const colors = { general: '#475569', academic: '#10b981', event: '#8b5cf6', urgent: '#ef4444' };
+            return colors[category] || colors.general;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAnnouncementsFromAdmin);
+        setInterval(loadAnnouncementsFromAdmin, 30000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const enrollForm = document.getElementById('enrollmentForm');
+            if (enrollForm) {
+                enrollForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const data = {
+                        firstName: formData.get('firstName'), lastName: formData.get('lastName'),
+                        birthdate: formData.get('birthdate'), gender: formData.get('gender'),
+                        address: formData.get('address'), email: formData.get('email'),
+                        phone: formData.get('phone'), gradeLevel: formData.get('gradeLevel'),
+                        strand: formData.get('strand'), lastSchool: formData.get('lastSchool'),
+                        guardianName: formData.get('guardianName'), guardianPhone: formData.get('guardianPhone')
+                    };
+                    try {
+                        const response = await fetch('http://localhost/school/api/enrollment.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            alert('✅ Enrollment Submitted Successfully!\n\nThank you! We will contact you within 24 hours.');
+                            enrollForm.reset();
+                            const modal = document.getElementById('enrollmentModal');
+                            if (modal) modal.style.display = 'none';
+                        } else {
+                            alert('❌ Error: ' + result.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('⚠️ Connection Error\n\nCannot connect to server. Make sure XAMPP MySQL is running.');
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

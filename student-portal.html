@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - FFHNAS</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --secondary: #34d399;
+    --accent: #f59e0b;
+    --dark: #1e293b;
+    --text: #475569;
+    --text-light: #94a3b8;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --danger: #ef4444;
+    --info: #3b82f6;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--light);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* HEADER */
+.header {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.875rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+
+.brand-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 0.625rem;
+    display: flex; align-items: center; justify-content: center;
+    color: white; flex-shrink: 0;
+}
+
+.brand-text h1 { font-size: 1rem; font-weight: 800; color: var(--dark); line-height: 1.2; }
+.brand-text p  { font-size: 0.75rem; color: var(--text-light); }
+
+.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+.icon-btn {
+    position: relative;
+    width: 38px; height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text);
+    transition: all 0.2s;
+}
+.icon-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+.notif-dot {
+    position: absolute; top: -3px; right: -3px;
+    width: 8px; height: 8px;
+    background: var(--danger); border-radius: 50%;
+    border: 2px solid white;
+}
+
+.user-pill {
+    display: flex; align-items: center; gap: 0.625rem;
+    padding: 0.375rem 0.875rem 0.375rem 0.375rem;
+    border: 1px solid var(--border); border-radius: 2rem;
+    background: white; cursor: pointer; transition: all 0.2s;
+}
+.user-pill:hover { border-color: var(--primary); }
+
+.avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.75rem; flex-shrink: 0;
+}
+
+.user-pill-name { font-size: 0.875rem; font-weight: 600; color: var(--dark); }
+
+.logout-btn {
+    display: flex; align-items: center; gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border); border-radius: 0.5rem;
+    background: white; color: var(--text);
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.logout-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+/* LAYOUT */
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 65px);
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: white;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: sticky; top: 65px;
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+}
+
+.student-profile-card {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+}
+
+.profile-avatar-lg {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.25rem;
+    margin: 0 auto 0.75rem;
+    border: 3px solid rgba(16,185,129,0.2);
+}
+
+.profile-name  { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 0.25rem; }
+.profile-info  { font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.5rem; }
+
+.profile-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(16,185,129,0.1); color: var(--primary);
+    border-radius: 50px; font-size: 0.75rem; font-weight: 600;
+}
+
+.nav { padding: 1rem; flex: 1; }
+
+.nav-section-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-light); padding: 0.5rem 0.75rem; margin-top: 0.5rem;
+}
+
+.nav-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.625rem 0.875rem; border-radius: 0.5rem;
+    color: var(--text); font-weight: 500; font-size: 0.9rem;
+    cursor: pointer; transition: all 0.2s; margin-bottom: 0.125rem;
+    border: none; background: none; width: 100%; text-align: left; font-family: inherit;
+}
+.nav-item:hover  { background: var(--light); color: var(--primary); }
+.nav-item.active { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.08)); color: var(--primary); font-weight: 600; }
+.nav-item svg    { flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+
+.nav-badge {
+    margin-left: auto;
+    background: var(--danger); color: white;
+    font-size: 0.68rem; font-weight: 700;
+    padding: 0.15rem 0.45rem; border-radius: 50px;
+    min-width: 18px; text-align: center;
+}
+
+.sidebar-footer { padding: 1rem; border-top: 1px solid var(--border); }
+
+.back-link {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.625rem; border: 1px solid var(--border); border-radius: 0.5rem;
+    color: var(--text); font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+}
+.back-link:hover { border-color: var(--primary); color: var(--primary); }
+
+/* MAIN */
+.main { padding: 2rem; overflow-y: auto; height: calc(100vh - 65px); }
+
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.3s ease; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-title { margin-bottom: 1.75rem; }
+.page-title h2 { font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-bottom: 0.25rem; }
+.page-title p  { color: var(--text-light); font-size: 0.9rem; }
+
+/* STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-bottom: 1.75rem;
+}
+
+.stat-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: 1rem; padding: 1.25rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: box-shadow 0.2s;
+}
+.stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+.stat-icon { width: 44px; height: 44px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon.green  { background: rgba(16,185,129,0.1); color: var(--primary); }
+.stat-icon.amber  { background: rgba(245,158,11,0.1); color: var(--accent); }
+.stat-icon.blue   { background: rgba(59,130,246,0.1); color: var(--info); }
+.stat-icon.red    { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+.stat-value { font-size: 1.5rem; font-weight: 800; color: var(--dark); line-height: 1; }
+.stat-label { font-size: 0.8rem; color: var(--text-light); margin-top: 0.25rem; }
+
+/* CARD */
+.card { background: white; border: 1px solid var(--border); border-radius: 1rem; overflow: hidden; margin-bottom: 1.5rem; }
+
+.card-header {
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+}
+.card-header h3 { font-size: 1rem; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 0.5rem; }
+.card-body { padding: 1.5rem; }
+
+.card-link { font-size: 0.85rem; color: var(--primary); font-weight: 600; cursor: pointer; background: none; border: none; font-family: inherit; }
+.card-link:hover { text-decoration: underline; }
+
+/* TWO COL */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+/* WELCOME BANNER */
+.welcome-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 1rem; padding: 1.75rem 2rem;
+    color: white; margin-bottom: 1.75rem;
+    position: relative; overflow: hidden;
+}
+.welcome-banner::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; background: rgba(255,255,255,0.08); border-radius: 50%;
+}
+.welcome-banner h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.25rem; }
+.welcome-banner p  { opacity: 0.85; font-size: 0.9rem; }
+.welcome-chips { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+.welcome-chip {
+    background: rgba(255,255,255,0.18); border-radius: 50px;
+    padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; gap: 0.375rem;
+}
+
+/* ANNOUNCEMENTS */
+.announcement-item {
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--primary);
+    background: rgba(16,185,129,0.04);
+    border-radius: 0 0.5rem 0.5rem 0;
+    margin-bottom: 0.75rem; transition: all 0.2s;
+}
+.announcement-item:last-child { margin-bottom: 0; }
+.announcement-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.announcement-item.urgent { border-left-color: var(--danger); background: rgba(239,68,68,0.04); }
+
+.ann-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.375rem; }
+.ann-badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; }
+.ann-badge.info   { background: rgba(16,185,129,0.1); color: var(--primary); }
+.ann-badge.urgent { background: rgba(239,68,68,0.1); color: var(--danger); }
+.ann-title   { font-size: 0.925rem; font-weight: 700; color: var(--dark); }
+.ann-content { font-size: 0.875rem; color: var(--text); line-height: 1.6; margin-bottom: 0.5rem; }
+.ann-meta    { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-light); }
+
+/* TABLES */
+.table-responsive { overflow-x: auto; padding: 1.5rem; }
+
+.schedule-table,
+.grades-table,
+.attendance-table { width: 100%; border-collapse: collapse; }
+
+.schedule-table th,
+.grades-table th,
+.attendance-table th {
+    padding: 0.75rem 1rem; text-align: left;
+    font-size: 0.8rem; font-weight: 700; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    background: var(--light); border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+
+.schedule-table td,
+.grades-table td,
+.attendance-table td {
+    padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+}
+
+.schedule-table tr:last-child td,
+.grades-table tr:last-child td,
+.attendance-table tr:last-child td { border-bottom: none; }
+
+.schedule-table tr:hover td,
+.grades-table tr:hover td,
+.attendance-table tr:hover td { background: var(--light); }
+
+/* SCHEDULE BREAK ROW */
+.break-row td { background: #fafafa; color: var(--text-light); font-style: italic; text-align: center; font-size: 0.85rem; }
+
+/* SUBJECT PILL */
+.subject-pill {
+    display: inline-flex; align-items: center;
+    padding: 0.3rem 0.75rem; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+}
+.subject-pill.green  { background: rgba(16,185,129,0.1); color: var(--primary); }
+.subject-pill.blue   { background: rgba(59,130,246,0.1); color: var(--info); }
+.subject-pill.amber  { background: rgba(245,158,11,0.1); color: var(--accent); }
+.subject-pill.purple { background: rgba(139,92,246,0.1); color: #7c3aed; }
+.subject-pill.pink   { background: rgba(236,72,153,0.1); color: #db2777; }
+.subject-pill.red    { background: rgba(239,68,68,0.1); color: var(--danger); }
+.subject-pill.teal   { background: rgba(20,184,166,0.1); color: #0d9488; }
+
+/* GRADES */
+.grade-pill { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.85rem; font-weight: 700; }
+.grade-pill.excellent { background: rgba(16,185,129,0.1); color: var(--primary); }
+.grade-pill.good      { background: rgba(59,130,246,0.1); color: var(--info); }
+.grade-pill.average   { background: rgba(245,158,11,0.1); color: var(--accent); }
+.grade-pill.low       { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+.grade-bar-wrap { display: flex; align-items: center; gap: 0.625rem; }
+.grade-bar      { flex: 1; height: 6px; background: var(--border); border-radius: 50px; overflow: hidden; }
+.grade-bar-fill { height: 100%; border-radius: 50px; }
+
+/* ASSIGNMENT CARDS */
+.assignment-card {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.125rem 1.25rem;
+    border: 1px solid var(--border); border-radius: 0.75rem;
+    margin-bottom: 0.75rem; background: white; transition: all 0.2s;
+}
+.assignment-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); border-color: rgba(16,185,129,0.3); }
+
+.assignment-icon {
+    width: 42px; height: 42px; border-radius: 0.625rem;
+    background: var(--light); display: flex; align-items: center; justify-content: center;
+    color: var(--primary); flex-shrink: 0;
+}
+
+.assignment-info   { flex: 1; min-width: 0; }
+.assignment-title  { font-size: 0.925rem; font-weight: 700; color: var(--dark); margin-bottom: 0.25rem; }
+.assignment-meta   { display: flex; flex-wrap: wrap; gap: 0.625rem; font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.5rem; }
+.assignment-desc   { font-size: 0.85rem; color: var(--text); margin-top: 0.375rem; line-height: 1.5; }
+
+.assignment-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 0.375rem; flex-shrink: 0; }
+
+.status-chip { padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+.status-chip.pending   { background: rgba(245,158,11,0.1); color: var(--accent); }
+.status-chip.submitted { background: rgba(16,185,129,0.1); color: var(--primary); }
+.status-chip.late      { background: rgba(239,68,68,0.1); color: var(--danger); }
+.status-chip.graded    { background: rgba(59,130,246,0.1); color: var(--info); }
+
+.btn-open-submit {
+    padding: 0.4rem 0.875rem;
+    background: var(--primary); color: white;
+    border: none; border-radius: 0.375rem;
+    font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+    display: flex; align-items: center; gap: 0.375rem;
+}
+.btn-open-submit:hover { background: var(--primary-dark); }
+
+.submitted-info {
+    font-size: 0.8rem; color: var(--primary);
+    display: flex; align-items: center; gap: 0.375rem; font-weight: 600;
+}
+
+/* SUBMIT MODAL */
+.modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+}
+.modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+    background: white; border-radius: 1rem;
+    width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: white; z-index: 1;
+}
+.modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+
+.modal-close-btn {
+    width: 32px; height: 32px; border-radius: 0.5rem;
+    border: 1px solid var(--border); background: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); transition: all 0.2s;
+}
+.modal-close-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+.modal-body { padding: 1.5rem; }
+
+.modal-assignment-info {
+    background: var(--light); border-radius: 0.75rem;
+    padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+    border-left: 4px solid var(--primary);
+}
+.modal-assignment-info h4 { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 0.25rem; }
+.modal-assignment-info p  { font-size: 0.85rem; color: var(--text); margin-bottom: 0.25rem; }
+.modal-assignment-info .meta { font-size: 0.8rem; color: var(--text-light); display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+
+/* FORM */
+.form-group { margin-bottom: 1.125rem; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--dark); margin-bottom: 0.375rem; }
+
+.form-input,
+.form-textarea,
+.filter-select {
+    width: 100%; padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border); border-radius: 0.5rem;
+    font-size: 0.9rem; color: var(--dark);
+    background: white; font-family: inherit;
+    transition: border-color 0.2s;
+}
+.form-input:focus,
+.form-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+
+.form-textarea { resize: vertical; min-height: 80px; }
+
+.filter-select { width: auto; cursor: pointer; }
+
+/* FILE DROP ZONE */
+.file-drop-zone {
+    border: 2px dashed var(--border); border-radius: 0.75rem;
+    padding: 2rem 1rem; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+    color: var(--text-light);
+}
+.file-drop-zone:hover, .file-drop-zone.drag-over {
+    border-color: var(--primary); background: rgba(16,185,129,0.04);
+}
+.file-drop-zone svg { margin: 0 auto 0.75rem; display: block; color: var(--text-light); }
+.file-drop-zone p   { font-size: 0.9rem; margin-bottom: 0.25rem; }
+.file-drop-zone small { font-size: 0.78rem; }
+
+/* FILE LIST */
+.file-list { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.file-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--light); border-radius: 0.5rem;
+    border: 1px solid var(--border);
+}
+.file-item-icon { width: 36px; height: 36px; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.file-item-icon.image { background: rgba(59,130,246,0.1); color: var(--info); }
+.file-item-icon.pdf   { background: rgba(239,68,68,0.1); color: var(--danger); }
+.file-item-icon.doc   { background: rgba(16,185,129,0.1); color: var(--primary); }
+.file-item-icon.other { background: rgba(245,158,11,0.1); color: var(--accent); }
+
+.file-item-info   { flex: 1; min-width: 0; }
+.file-item-name   { font-size: 0.85rem; font-weight: 600; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-item-size   { font-size: 0.75rem; color: var(--text-light); }
+
+.file-item-preview { width: 40px; height: 40px; border-radius: 0.375rem; object-fit: cover; flex-shrink: 0; }
+
+.file-remove-btn {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: none; background: none; cursor: pointer;
+    color: var(--text-light); display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+}
+.file-remove-btn:hover { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+/* MODAL FOOTER */
+.modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+.btn-cancel {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--border); border-radius: 0.5rem;
+    background: white; color: var(--text);
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.btn-cancel:hover { background: var(--light); }
+
+.btn-submit-final {
+    padding: 0.625rem 1.5rem;
+    background: var(--primary); color: white;
+    border: none; border-radius: 0.5rem;
+    font-size: 0.875rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.btn-submit-final:hover { background: var(--primary-dark); }
+
+/* ATTENDANCE */
+.attendance-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+
+.att-stat { text-align: center; padding: 1.25rem; border-radius: 0.75rem; background: white; border: 1px solid var(--border); }
+.att-stat-value { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+.att-stat-label { font-size: 0.8rem; color: var(--text-light); }
+.att-stat.present .att-stat-value { color: var(--primary); }
+.att-stat.absent  .att-stat-value { color: var(--danger); }
+.att-stat.late    .att-stat-value { color: var(--accent); }
+.att-stat.total   .att-stat-value { color: var(--dark); }
+
+.att-badge { display: inline-block; padding: 0.25rem 0.625rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+.att-badge.present { background: rgba(16,185,129,0.1); color: var(--primary); }
+.att-badge.absent  { background: rgba(239,68,68,0.1); color: var(--danger); }
+.att-badge.late    { background: rgba(245,158,11,0.1); color: var(--accent); }
+
+/* CALENDAR */
+.cal-header { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.cal-nav { display: flex; gap: 0.5rem; }
+.cal-nav-btn { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 0.375rem; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); transition: all 0.2s; }
+.cal-nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-day-name { text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; padding: 0.375rem; }
+.cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; color: var(--dark); border-radius: 0.375rem; cursor: pointer; position: relative; transition: all 0.15s; }
+.cal-day:hover { background: var(--light); }
+.cal-day.other { color: var(--border); }
+.cal-day.today { background: var(--primary); color: white; font-weight: 700; }
+
+.event-dot { position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; }
+.event-dot.exam    { background: var(--accent); }
+.event-dot.holiday { background: var(--danger); }
+.event-dot.event, .event-dot.meeting { background: var(--info); }
+
+/* EVENTS */
+.event-item { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 3px solid transparent; transition: all 0.2s; }
+.event-item:hover { background: var(--light); }
+.event-item.holiday { border-left-color: var(--danger); background: rgba(239,68,68,0.03); }
+.event-item.exam    { border-left-color: var(--accent); background: rgba(245,158,11,0.03); }
+.event-item.event, .event-item.meeting { border-left-color: var(--info); background: rgba(59,130,246,0.03); }
+
+.event-date-box  { text-align: center; min-width: 36px; flex-shrink: 0; }
+.event-day-num   { font-size: 1.25rem; font-weight: 800; color: var(--dark); line-height: 1; }
+.event-month-str { font-size: 0.7rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
+.event-info      { flex: 1; }
+.event-info h4   { font-size: 0.875rem; font-weight: 700; color: var(--dark); }
+.event-info p    { font-size: 0.8rem; color: var(--text-light); }
+
+.event-type-chip { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 50px; text-transform: capitalize; flex-shrink: 0; }
+.event-type-chip.holiday { background: rgba(239,68,68,0.1); color: var(--danger); }
+.event-type-chip.exam    { background: rgba(245,158,11,0.1); color: var(--accent); }
+.event-type-chip.event, .event-type-chip.meeting { background: rgba(59,130,246,0.1); color: var(--info); }
+
+/* PROFILE */
+.profile-banner { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 1rem; padding: 2rem; color: white; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+.profile-avatar-xl { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.25); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.75rem; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.4); }
+.profile-banner h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem; }
+.profile-banner p  { opacity: 0.85; font-size: 0.875rem; }
+.profile-chips { display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+.profile-chip  { background: rgba(255,255,255,0.18); padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+
+.info-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.info-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 0.25rem; }
+.info-value { font-size: 0.9rem; font-weight: 600; color: var(--dark); }
+
+/* PROGRESS */
+.progress-item  { margin-bottom: 1rem; }
+.progress-label { display: flex; justify-content: space-between; margin-bottom: 0.375rem; }
+.progress-name  { font-size: 0.875rem; font-weight: 600; color: var(--dark); }
+.progress-val   { font-size: 0.875rem; font-weight: 700; color: var(--primary); }
+.progress-bar   { height: 8px; background: var(--border); border-radius: 50px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+
+/* TOAST */
+.toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.625rem; pointer-events: none; }
+.toast { background: white; border-radius: 0.625rem; padding: 0.875rem 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.12); border-left: 4px solid var(--primary); min-width: 280px; max-width: 360px; animation: toastIn 0.3s ease; pointer-events: all; }
+.toast.error { border-left-color: var(--danger); }
+.toast.info  { border-left-color: var(--info); }
+
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.toast-title { font-weight: 700; color: var(--dark); font-size: 0.875rem; margin-bottom: 0.25rem; }
+.toast-msg   { font-size: 0.825rem; color: var(--text); }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-light); }
+.empty-state p { font-size: 0.9rem; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .two-col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .header-inner { padding: 0.75rem 1rem; }
+    .main { padding: 1rem; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .attendance-summary { grid-template-columns: repeat(2, 1fr); }
+    .user-pill-name { display: none; }
+    .info-grid { grid-template-columns: 1fr; }
+    .assignment-card { flex-wrap: wrap; }
+}
+
+/* ========== STUDENT PORTAL MOBILE IMPROVEMENTS ========== */
+
+/* Mobile hamburger button */
+.mobile-menu-btn {
+    display: none;
+    width: 38px; height: 38px;
+    border: 1px solid var(--border); border-radius: 0.5rem;
+    background: white; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+    /* Show hamburger */
+    .mobile-menu-btn { display: flex; }
+
+    /* Sidebar becomes slide-in drawer */
+    .sidebar {
+        display: flex;
+        position: fixed;
+        top: 0; left: -280px;
+        width: 260px; height: 100vh;
+        z-index: 300;
+        transition: left 0.3s ease;
+        box-shadow: none;
+    }
+    .sidebar.open {
+        left: 0;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+
+    /* Overlay behind sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 299;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .layout { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .main { height: auto; overflow-y: visible; }
+}
+
+@media (max-width: 768px) {
+    /* Header */
+    .header-inner { padding: 0.75rem 1rem; gap: 0.5rem; }
+    .brand-text p  { display: none; }
+    .brand-text h1 { font-size: 0.9rem; }
+    .brand-icon    { width: 32px; height: 32px; }
+    .header-actions { gap: 0.5rem; }
+
+    .user-pill-name { display: none; }
+    .user-pill { padding: 0.25rem; border-radius: 50%; }
+
+    .logout-btn span { display: none; }
+    .logout-btn {
+        padding: 0.5rem;
+        width: 38px; height: 38px;
+        justify-content: center;
+    }
+
+    /* Main */
+    .main { padding: 1rem; }
+    .page-title h2  { font-size: 1.25rem; }
+
+    /* Welcome banner */
+    .welcome-banner { padding: 1.25rem 1.25rem; }
+    .welcome-banner h3 { font-size: 1.15rem; }
+    .welcome-chips { gap: 0.5rem; }
+    .welcome-chip  { font-size: 0.75rem; padding: 0.3rem 0.625rem; }
+
+    /* Stats */
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .stat-card  { padding: 1rem; gap: 0.75rem; }
+    .stat-icon  { width: 38px; height: 38px; }
+    .stat-value { font-size: 1.25rem; }
+
+    /* Cards */
+    .card-header { padding: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .card-body   { padding: 1rem; }
+    .card-header > div { flex-wrap: wrap; gap: 0.5rem; }
+
+    /* Filter selects */
+    .filter-select { font-size: 0.82rem; padding: 0.35rem 0.5rem; }
+
+    /* Assignments */
+    .assignment-card { flex-wrap: wrap; padding: 1rem; gap: 0.75rem; }
+    .assignment-actions { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+
+    /* Tables */
+    .table-responsive { padding: 0.75rem; }
+
+    /* Attendance summary */
+    .attendance-summary { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .att-stat-value { font-size: 1.5rem; }
+
+    /* Profile banner */
+    .profile-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+    }
+    .profile-chips { justify-content: center; }
+    .info-grid { grid-template-columns: 1fr; }
+
+    /* Calendar two-col already stacked via .two-col override above */
+
+    /* Modal */
+    .modal-box    { border-radius: 0.75rem; }
+    .modal-body   { padding: 1rem; }
+    .modal-footer { flex-wrap: wrap; }
+    .modal-footer .btn-cancel,
+    .modal-footer .btn-submit-final { flex: 1; justify-content: center; }
+
+    /* Toast */
+    .toast-container { top: auto; bottom: 1rem; right: 1rem; left: 1rem; }
+    .toast { min-width: unset; max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .attendance-summary { grid-template-columns: repeat(2, 1fr); }
+
+    .brand-icon { display: none; }
+
+    .assignment-card { gap: 0.625rem; }
+    .assignment-icon { width: 36px; height: 36px; }
+
+    .file-drop-zone { padding: 1.25rem 0.75rem; }
+    .file-drop-zone svg { width: 24px; height: 24px; }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>FFHNAS Portal</h1>
+                <p>Student Dashboard</p>
+            </div>
+        </a>
+        <div class="header-actions">
+            <!-- First child of .header-actions: -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+            <button class="icon-btn" onclick="toggleNotifications()" title="Notifications">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span class="notif-dot" id="notifDot"></span>
+            </button>
+            <div class="user-pill" onclick="navigate('profile')">
+                <div class="avatar" id="headerAvatar">ST</div>
+                <span class="user-pill-name" id="headerName">Student</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" x2="9" y1="12" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="student-profile-card">
+            <div class="profile-avatar-lg" id="sidebarAvatar">ST</div>
+            <div class="profile-name" id="sidebarName">Student Name</div>
+            <div class="profile-info" id="sidebarSectionInfo">—</div>
+            <span class="profile-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                Active Student
+            </span>
+        </div>
+        <nav class="nav">
+            <div class="nav-section-label">Main</div>
+            <button class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                Dashboard
+            </button>
+            <button class="nav-item" data-page="announcements" onclick="navigate('announcements')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Announcements
+                <span class="nav-badge" id="annBadge">0</span>
+            </button>
+            <div class="nav-section-label">Academics</div>
+            <button class="nav-item" data-page="schedule" onclick="navigate('schedule')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Class Schedule
+            </button>
+            <button class="nav-item" data-page="grades" onclick="navigate('grades')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                My Grades
+            </button>
+            <button class="nav-item" data-page="assignments" onclick="navigate('assignments')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+                Assignments
+                <span class="nav-badge" id="assignBadge">3</span>
+            </button>
+            <button class="nav-item" data-page="attendance" onclick="navigate('attendance')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                Attendance
+            </button>
+            <div class="nav-section-label">More</div>
+            <button class="nav-item" data-page="calendar" onclick="navigate('calendar')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Calendar & Events
+            </button>
+            <button class="nav-item" data-page="profile" onclick="navigate('profile')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+            </button>
+            <button class="nav-item" data-page="settings" onclick="navigate('settings')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+</button>
+<button class="nav-item" data-page="services" onclick="navigate('services')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    School Services
+</button>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                Back to School Website
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+            <div class="page-title">
+                <h2 id="dashGreeting">Good Morning! 👋</h2>
+                <p>Here's your academic overview for today.</p>
+            </div>
+            <div class="welcome-banner">
+                <div>
+                    <h3 id="bannerName">Welcome back!</h3>
+                    <p>SY 2026-2027 · 2nd Semester is currently in progress</p>
+                    <div class="welcome-chips">
+                        <span class="welcome-chip">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                            <span id="todayDate"></span>
+                        </span>
+                        <span class="welcome-chip">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+                            <span id="dashGradeChip">—</span>
+                        </span>
+                        <span class="welcome-chip">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Week 14 of 20
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div>
+                    <div><div class="stat-value">88.5</div><div class="stat-label">Average Grade</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg></div>
+                    <div><div class="stat-value">92%</div><div class="stat-label">Attendance Rate</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+                    <div><div class="stat-value" id="pendingCount">3</div><div class="stat-label">Pending Tasks</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="3" x2="21" y1="10" y2="10"/></svg></div>
+                    <div><div class="stat-value">2</div><div class="stat-label">Upcoming Exams</div></div>
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Latest Announcements</h3>
+                        <button class="card-link" onclick="navigate('announcements')">View All</button>
+                    </div>
+                    <div class="card-body" id="dashAnnouncements"><div class="empty-state"><p>No announcements yet</p></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Today's Schedule</h3>
+                        <button class="card-link" onclick="navigate('schedule')">Full Schedule</button>
+                    </div>
+                    <div id="todaySchedule"></div>
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Pending Assignments</h3>
+                        <button class="card-link" onclick="navigate('assignments')">View All</button>
+                    </div>
+                    <div class="card-body" id="dashAssignments"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Upcoming Events</h3>
+                        <button class="card-link" onclick="navigate('calendar')">Calendar</button>
+                    </div>
+                    <div style="padding:1rem;" id="dashEvents"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="page" id="page-announcements">
+            <div class="page-title"><h2>Announcements</h2><p>Stay updated with the latest school news</p></div>
+            <div class="card">
+                <div class="card-body" id="fullAnnouncements"><div class="empty-state"><p>No announcements yet</p></div></div>
+            </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="page" id="page-schedule">
+            <div class="page-title"><h2>Class Schedule</h2><p>Your weekly timetable — SY 2026-2027, 2nd Semester</p></div>
+            <div class="card">
+                 <div class="card-header"><h3>Weekly Schedule — <span id="scheduleCardTitle">—</span></h3></div>
+                <div class="table-responsive">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRADES -->
+        <div class="page" id="page-grades">
+            <div class="page-title"><h2>My Grades</h2><p>Academic performance — 2nd Semester</p></div>
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon green"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div>
+                    <div><div class="stat-value">88.5</div><div class="stat-label">General Average</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                    <div><div class="stat-value" style="font-size:1rem;">With Honors</div><div class="stat-label">Academic Standing</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon amber"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+                    <div><div class="stat-value">7/8</div><div class="stat-label">Subjects Passing</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Subject Grades</h3>
+                    <button class="card-link" onclick="showToast('Export','Grades exported!','success')">Export PDF</button>
+                </div>
+                <div class="table-responsive"><table class="grades-table" id="gradesTable"></table></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Subject Performance</h3></div>
+                <div class="card-body" id="performanceBars"></div>
+            </div>
+        </div>
+
+        <!-- ASSIGNMENTS -->
+        <div class="page" id="page-assignments">
+            <div class="page-title"><h2>Assignments</h2><p>View, track, and submit your assignments</p></div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Tasks</h3>
+                    <select class="filter-select" id="assignFilter" onchange="renderAssignments()">
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="graded">Graded</option>
+                    </select>
+                    <select class="filter-select" id="assignSubjectFilter" onchange="renderAssignments()">
+    <option value="all">All Subjects</option>
+</select>
+                </div>
+                <div class="card-body" id="assignmentsList"></div>
+            </div>
+        </div>
+
+        <!-- SUBMIT MODAL -->
+        <div class="modal-overlay" id="submitModal" onclick="closeSubmitModal(event)">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Submit Assignment</h3>
+                    <button class="modal-close-btn" onclick="closeSubmitModalDirect()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-assignment-info" id="modalAssignmentInfo"></div>
+                    <form id="submissionForm" onsubmit="handleSubmit(event)">
+                        <input type="hidden" id="submitAssignmentId">
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" class="form-input" id="submitStudentName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notes / Comments</label>
+                            <textarea class="form-textarea" id="submitNotes" placeholder="Add any notes or comments about your submission..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Attach File(s)</label>
+                            <div class="file-drop-zone" id="fileDropZone" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" x2="12" y1="3" y2="15"/>
+                                </svg>
+                                <p>Drag & drop files here or <span style="color:var(--primary);font-weight:600;">browse</span></p>
+                                <small>Supports: Images, PDF, Word, Excel (max 10MB each)</small>
+                            </div>
+                            <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" style="display:none" onchange="handleFileSelect(event)">
+                            <div class="file-list" id="fileList"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn-cancel" onclick="closeSubmitModalDirect()">Cancel</button>
+                            <button type="submit" class="btn-submit-final">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                Submit Assignment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE -->
+        <div class="page" id="page-attendance">
+            <div class="page-title"><h2>My Attendance</h2><p>Attendance record for the current semester</p></div>
+            <div class="attendance-summary">
+                <div class="att-stat present"><div class="att-stat-value">46</div><div class="att-stat-label">Present</div></div>
+                <div class="att-stat absent"><div class="att-stat-value">3</div><div class="att-stat-label">Absent</div></div>
+                <div class="att-stat late"><div class="att-stat-value">1</div><div class="att-stat-label">Late</div></div>
+                <div class="att-stat total"><div class="att-stat-value">50</div><div class="att-stat-label">Total Days</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Attendance Record</h3>
+                    <span style="font-size:0.875rem;color:var(--primary);font-weight:700;">92% Rate</span>
+                </div>
+                <div class="table-responsive"><table class="attendance-table" id="attendanceTable"></table></div>
+            </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="page" id="page-calendar">
+            <div class="page-title"><h2>Calendar & Events</h2><p>Academic calendar for the current school year</p></div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="cal-header">
+                            <h3 id="calMonthLabel">March 2026</h3>
+                            <div class="cal-nav">
+                                <button class="cal-nav-btn" onclick="changeMonth(-1)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+                                <button class="cal-nav-btn" onclick="changeMonth(1)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="cal-grid" id="calWeekdays"></div>
+                        <div class="cal-grid" id="calDays"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Upcoming Events</h3></div>
+                    <div style="padding:1rem;" id="eventsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="page" id="page-profile">
+            <div class="page-title"><h2>My Profile</h2><p>Your personal and academic information</p></div>
+            <div class="profile-banner">
+                <div class="profile-avatar-xl" id="profileAvatarXL">ST</div>
+                <div>
+                    <h3 id="profileBannerName">Student Name</h3>
+                    <p id="profileBannerSub">—</p>
+                    <div class="profile-chips">
+                        <span class="profile-chip" id="profileLrnChip">LRN: —</span>
+                        <span class="profile-chip">SY 2026-2027</span>
+                        <span class="profile-chip">2nd Semester</span>
+                    </div>
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><h3>Personal Information</h3></div>
+                    <div class="card-body"><div class="info-grid" id="personalInfo"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Academic Information</h3></div>
+                    <div class="card-body"><div class="info-grid" id="academicInfo"></div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>Subject Performance Overview</h3></div>
+                <div class="card-body" id="profilePerformance"></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+<div class="page" id="page-settings">
+    <div class="page-title"><h2>Settings</h2><p>Update your profile information — changes require admin approval</p></div>
+    <div class="two-col">
+        <div class="card">
+            <div class="card-header"><h3>Profile Information</h3></div>
+            <div class="card-body">
+                <div id="settingsPendingNotice" style="display:none;background:#fef9c3;border:1px solid #fde047;border-radius:0.625rem;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.875rem;color:#854d0e;">
+                    ⏳ You have a pending profile change request awaiting admin approval.
+                </div>
+                <form onsubmit="submitProfileChange(event)">
+                    <div class="form-group" style="margin-bottom:1rem;">
+                        <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">First Name</label>
+                        <input type="text" class="form-input" id="settingsFirstName" placeholder="First name" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:1rem;">
+                        <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">Last Name</label>
+                        <input type="text" class="form-input" id="settingsLastName" placeholder="Last name" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:1.25rem;">
+                        <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">Email Address</label>
+                        <input type="email" class="form-input" id="settingsEmail" placeholder="Email" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                    </div>
+                    <button type="submit" class="btn-submit-final" style="width:100%;justify-content:center;">Save Profile</button>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>Change Password</h3></div>
+            <div class="card-body">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">Current Password</label>
+                    <input type="password" id="settingsCurrentPw" placeholder="••••••••" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">New Password</label>
+                    <input type="password" id="settingsNewPw" placeholder="••••••••" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                </div>
+                <div class="form-group" style="margin-bottom:1.25rem;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.375rem;">Confirm New Password</label>
+                    <input type="password" id="settingsConfirmPw" placeholder="••••••••" style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                </div>
+                <button type="button" onclick="submitPasswordChange()" class="btn-submit-final" style="width:100%;justify-content:center;">Update Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCHOOL SERVICES -->
+<div class="page" id="page-services">
+    <div class="page-title"><h2>School Services</h2><p>Handy health & academic tools for students</p></div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;">
+
+        <!-- BMI CALCULATOR -->
+        <div class="card">
+            <div class="card-header">
+                <h3 style="display:flex;align-items:center;gap:0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    BMI Calculator
+                </h3>
+            </div>
+            <div class="card-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:#374151;display:block;margin-bottom:0.3rem;">Weight (kg)</label>
+                        <input type="number" id="bmiWeight" placeholder="e.g. 55" min="1" style="width:100%;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:#374151;display:block;margin-bottom:0.3rem;">Height (cm)</label>
+                        <input type="number" id="bmiHeight" placeholder="e.g. 165" min="1" style="width:100%;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;">
+                    </div>
+                </div>
+                <button onclick="calcBMI()" class="btn-submit-final" style="width:100%;justify-content:center;margin-bottom:1rem;">Calculate BMI</button>
+                <div id="bmiResult" style="display:none;text-align:center;padding:1rem;border-radius:0.75rem;background:#f8fafc;border:1px solid #e2e8f0;">
+                    <div id="bmiValue" style="font-size:2.5rem;font-weight:800;"></div>
+                    <div id="bmiCategory" style="font-size:1rem;font-weight:600;margin-top:0.25rem;"></div>
+                    <div id="bmiAdvice" style="font-size:0.8rem;color:#64748b;margin-top:0.5rem;"></div>
+                    <!-- BMI gauge bar -->
+                    <div style="margin-top:1rem;position:relative;height:12px;border-radius:999px;background:linear-gradient(to right,#3b82f6 0%,#10b981 25%,#f59e0b 60%,#ef4444 100%);overflow:hidden;">
+                        <div id="bmiMarker" style="position:absolute;top:-3px;width:18px;height:18px;background:white;border:3px solid #0f172a;border-radius:50%;transform:translateX(-50%);transition:left 0.5s;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#94a3b8;margin-top:0.3rem;">
+                        <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GWA CALCULATOR -->
+        <div class="card">
+            <div class="card-header">
+                <h3 style="display:flex;align-items:center;gap:0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    GWA Calculator
+                </h3>
+                <button onclick="addGwaRow()" style="font-size:0.78rem;padding:0.3rem 0.75rem;background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;border-radius:0.5rem;cursor:pointer;font-weight:600;">+ Add Subject</button>
+            </div>
+            <div class="card-body">
+                <div id="gwaRows" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.75rem;max-height:260px;overflow-y:auto;"></div>
+                <button onclick="calcGWA()" class="btn-submit-final" style="width:100%;justify-content:center;margin-bottom:1rem;">Calculate GWA</button>
+                <div id="gwaResult" style="display:none;text-align:center;padding:1rem;border-radius:0.75rem;background:#f8fafc;border:1px solid #e2e8f0;">
+                    <div id="gwaValue" style="font-size:2.5rem;font-weight:800;color:#3b82f6;"></div>
+                    <div id="gwaStanding" style="font-size:1rem;font-weight:600;margin-top:0.25rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BODY TEMPERATURE CHECKER -->
+        <div class="card">
+            <div class="card-header">
+                <h3 style="display:flex;align-items:center;gap:0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                    Body Temperature
+                </h3>
+            </div>
+            <div class="card-body" style="display:flex;flex-direction:column;align-items:center;">
+                <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                    <button onclick="setTempUnit('C')" id="btnC" style="padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#fee2e2;color:#ef4444;border:2px solid #ef4444;">°C</button>
+                    <button onclick="setTempUnit('F')" id="btnF" style="padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#f1f5f9;color:#94a3b8;border:2px solid #e2e8f0;">°F</button>
+                </div>
+                <div style="display:flex;gap:0.75rem;align-items:flex-end;margin-bottom:1rem;">
+                    <input type="number" id="tempInput" placeholder="36.5" step="0.1" style="width:130px;padding:0.6rem 0.75rem;border:2px solid #e2e8f0;border-radius:0.625rem;font-size:1.5rem;font-weight:700;text-align:center;">
+                    <span id="tempUnitLabel" style="font-size:1.25rem;font-weight:700;color:#64748b;padding-bottom:0.5rem;">°C</span>
+                </div>
+                <!-- Thermometer Visual -->
+                <div style="position:relative;width:40px;height:180px;margin-bottom:1rem;">
+                    <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:24px;width:14px;height:148px;background:#f1f5f9;border:2px solid #e2e8f0;border-radius:7px 7px 0 0;overflow:hidden;">
+                        <div id="thermFill" style="position:absolute;bottom:0;width:100%;background:#10b981;border-radius:0 0 5px 5px;transition:height 0.6s,background 0.6s;height:40%;"></div>
+                    </div>
+                    <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:30px;height:30px;border-radius:50%;border:2px solid #e2e8f0;background:#f1f5f9;overflow:hidden;">
+                        <div id="thermBulb" style="width:100%;height:100%;background:#10b981;transition:background 0.6s;"></div>
+                    </div>
+                    <!-- Tick marks -->
+                    <div style="position:absolute;left:calc(50% + 10px);bottom:28px;height:148px;display:flex;flex-direction:column;justify-content:space-between;">
+                        <span style="font-size:0.6rem;color:#94a3b8;">41°</span>
+                        <span style="font-size:0.6rem;color:#94a3b8;">39°</span>
+                        <span style="font-size:0.6rem;color:#94a3b8;">37°</span>
+                        <span style="font-size:0.6rem;color:#94a3b8;">35°</span>
+                    </div>
+                </div>
+                <button onclick="calcTemp()" class="btn-submit-final" style="width:100%;justify-content:center;margin-bottom:1rem;">Check Temperature</button>
+                <div id="tempResult" style="display:none;width:100%;text-align:center;padding:1rem;border-radius:0.75rem;background:#f8fafc;border:1px solid #e2e8f0;">
+                    <div id="tempStatus" style="font-size:1.1rem;font-weight:700;"></div>
+                    <div id="tempAdvice" style="font-size:0.8rem;color:#64748b;margin-top:0.4rem;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<script>
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+}
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) toggleSidebar();
+    });
+});
+
+// EVENTS is now loaded from admin calendar
+function getSchoolEvents() {
+    const year = new Date().getFullYear();
+    return JSON.parse(localStorage.getItem(`ffhnas_calendar_events_${year}`) || '[]');
+}
+
+const SUBJECTS = [
+    { name: 'Pre-Calculus',                  teacher: 'Mr. Reyes',     prelim: 90, midterm: 88, finals: 91, color: 'green' },
+    { name: 'General Chemistry',             teacher: 'Mrs. Santos',   prelim: 85, midterm: 87, finals: 89, color: 'blue' },
+    { name: 'General Physics',               teacher: 'Mr. Cruz',      prelim: 88, midterm: 90, finals: 92, color: 'amber' },
+    { name: 'English for Academic Purposes', teacher: 'Ms. Garcia',    prelim: 92, midterm: 94, finals: 93, color: 'purple' },
+    { name: 'Filipino',                      teacher: 'Mr. Dela Cruz', prelim: 87, midterm: 89, finals: 91, color: 'pink' },
+    { name: 'Physical Education',            teacher: 'Coach Rivera',  prelim: 95, midterm: 96, finals: 97, color: 'green' },
+    { name: 'Computer Science',              teacher: 'Ms. Torres',    prelim: 82, midterm: 84, finals: 86, color: 'teal' },
+    { name: 'Statistics & Probability',      teacher: 'Mr. Lopez',     prelim: 79, midterm: 82, finals: 84, color: 'red' }
+];
+
+const SCHEDULE = [
+    { time: '7:00 - 7:50 AM',      type: 'class',  mon:{s:'Pre-Calculus',c:'green'},  tue:{s:'Physics',c:'amber'},       wed:{s:'Pre-Calculus',c:'green'},  thu:{s:'Physics',c:'amber'},       fri:{s:'PE',c:'green'} },
+    { time: '7:50 - 8:40 AM',      type: 'class',  mon:{s:'Chemistry',c:'blue'},       tue:{s:'Filipino',c:'pink'},       wed:{s:'Chemistry',c:'blue'},       thu:{s:'Filipino',c:'pink'},       fri:{s:'Computer Sci.',c:'teal'} },
+    { time: '8:40 - 9:30 AM',      type: 'class',  mon:{s:'English',c:'purple'},       tue:{s:'Pre-Calculus',c:'green'},  wed:{s:'English',c:'purple'},       thu:{s:'Pre-Calculus',c:'green'},  fri:{s:'Statistics',c:'red'} },
+    { time: '9:30 - 9:50 AM',      type: 'break',  mon:{s:'Break'},                    tue:{s:'Break'},                   wed:{s:'Break'},                    thu:{s:'Break'},                   fri:{s:'Break'} },
+    { time: '9:50 - 10:40 AM',     type: 'class',  mon:{s:'Statistics',c:'red'},       tue:{s:'Chemistry',c:'blue'},      wed:{s:'Statistics',c:'red'},       thu:{s:'Chemistry',c:'blue'},      fri:{s:'English',c:'purple'} },
+    { time: '10:40 - 11:30 AM',    type: 'class',  mon:{s:'Physics',c:'amber'},        tue:{s:'Computer Sci.',c:'teal'},  wed:{s:'Physics',c:'amber'},        thu:{s:'Computer Sci.',c:'teal'},  fri:{s:'Filipino',c:'pink'} },
+    { time: '11:30 AM - 12:30 PM', type: 'break',  mon:{s:'Lunch Break'},              tue:{s:'Lunch Break'},             wed:{s:'Lunch Break'},              thu:{s:'Lunch Break'},             fri:{s:'Lunch Break'} },
+    { time: '12:30 - 1:20 PM',     type: 'class',  mon:{s:'Filipino',c:'pink'},        tue:{s:'PE',c:'green'},            wed:{s:'Computer Sci.',c:'teal'},   thu:{s:'English',c:'purple'},      fri:{s:'Chemistry',c:'blue'} },
+    { time: '1:20 - 2:10 PM',      type: 'class',  mon:{s:'Computer Sci.',c:'teal'},   tue:{s:'Statistics',c:'red'},      wed:{s:'PE',c:'green'},             thu:{s:'Statistics',c:'red'},      fri:{s:'Physics',c:'amber'} }
+];
+
+let ASSIGNMENTS = [];
+
+function loadAssignmentsFromTeacher() {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const allAssignments = [];
+for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('schoolAssignments_')) {
+        allAssignments.push(...JSON.parse(localStorage.getItem(key) || '[]'));
+    }
+}
+
+    // Find which section this student belongs to
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === String(currentUser.id))
+    );
+    const mySectionKey = mySection ? `section_${mySection.id}` : null;
+
+    // If student has no section, show no assignments
+const filtered = mySectionKey
+    ? allAssignments.filter(a => a.section === mySectionKey || a.section === 'all')
+    : [];
+
+    // Map teacher assignments to student format, preserving submission state
+    const saved = JSON.parse(localStorage.getItem(`student_submissions_${currentUser.id}`) || '{}');
+
+    ASSIGNMENTS = filtered.map(a => {
+        const sub = saved[a.id];
+        return {
+            id: a.id,
+            subject: a.subject,
+            color: 'blue',
+            title: a.title,
+            description: a.description,
+            dueDate: a.dueDate,
+            points: a.points,
+            type: a.type,
+            image: a.image || null,
+            status: sub ? sub.status : 'pending',
+            submittedAt: sub?.submittedAt || null,
+            submittedFiles: sub?.submittedFiles || [],
+            submittedNotes: sub?.submittedNotes || '',
+            grade: sub?.grade || null
+        };
+    });
+}
+
+const ATTENDANCE_RECORDS = [
+    { date:'2026-03-04', subject:'Pre-Calculus',   status:'present', teacher:'Mr. Reyes' },
+    { date:'2026-03-04', subject:'Chemistry',      status:'present', teacher:'Mrs. Santos' },
+    { date:'2026-03-03', subject:'Physics',        status:'late',    teacher:'Mr. Cruz' },
+    { date:'2026-03-03', subject:'English',        status:'present', teacher:'Ms. Garcia' },
+    { date:'2026-03-02', subject:'Filipino',       status:'present', teacher:'Mr. Dela Cruz' },
+    { date:'2026-03-02', subject:'Statistics',     status:'absent',  teacher:'Mr. Lopez' },
+    { date:'2026-02-28', subject:'Computer Sci.',  status:'present', teacher:'Ms. Torres' },
+    { date:'2026-02-27', subject:'PE',             status:'present', teacher:'Coach Rivera' },
+    { date:'2026-02-27', subject:'Pre-Calculus',   status:'absent',  teacher:'Mr. Reyes' },
+    { date:'2026-02-26', subject:'Chemistry',      status:'present', teacher:'Mrs. Santos' }
+];
+
+// ===== STATE =====
+let calYear = 2026, calMonth = 2;
+let selectedFiles = [];
+let currentSubmitId = null;
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    loadUser();
+    loadAssignmentsFromTeacher();
+    populateSubjectFilter();
+    setDynamicDate();
+    renderDashboard();
+    renderSchedule();
+    renderGrades();
+    renderAssignments();
+    renderAttendance();
+    renderCalendar();
+    renderEventsList('eventsList');
+    renderEventsList('dashEvents');
+    loadAnnouncements();
+});
+
+// ===== USER =====
+function loadUser() {
+    let userData = null;
+    try { userData = JSON.parse(localStorage.getItem('loggedInUser')); } catch(e) {}
+     const userExtra = JSON.parse(localStorage.getItem('ffhnas_user_extra') || '{}');
+    const extra = (userData?.email ? userExtra[userData.email] : null) || {};
+    const address = userData?.address || extra.address || '—';
+    const guardianName = userData?.guardianName || extra.guardianName || '—';
+    const guardianContact = userData?.guardianContact || extra.guardianContact || '';
+
+    const fullName = userData
+        ? (userData.first_name
+            ? `${userData.first_name} ${userData.last_name || ''}`.trim()
+            : (userData.name || 'Student'))
+        : 'Student';
+
+    const firstName = fullName.split(' ')[0];
+    const initials  = fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+    document.getElementById('headerAvatar').textContent     = initials;
+    document.getElementById('headerName').textContent       = firstName;
+    document.getElementById('sidebarAvatar').textContent    = initials;
+    document.getElementById('sidebarName').textContent      = fullName;
+    document.getElementById('bannerName').textContent       = `Welcome back, ${firstName}!`;
+    document.getElementById('profileAvatarXL').textContent  = initials;
+    document.getElementById('profileBannerName').textContent = fullName;
+const email = userData?.email || 'N/A';
+const lrnMap = JSON.parse(localStorage.getItem('ffhnas_lrn_map') || '{}');
+const lrn = userData?.lrn || (email !== 'N/A' ? lrnMap[email] : null) || '—';
+
+const lrnChip = document.getElementById('profileLrnChip');
+if (lrnChip) lrnChip.textContent = `LRN: ${lrn}`;
+
+    document.getElementById('personalInfo').innerHTML = `
+    <div><div class="info-label">Full Name</div><div class="info-value">${fullName}</div></div>
+    <div><div class="info-label">Email</div><div class="info-value">${email}</div></div>
+    <div><div class="info-label">LRN</div><div class="info-value">${lrn}</div></div>
+    <div><div class="info-label">Contact</div><div class="info-value">${userData?.contact || guardianContact || '—'}</div></div>
+    <div><div class="info-label">Address</div><div class="info-value">${address}</div></div>
+<div><div class="info-label">Guardian</div><div class="info-value">${guardianName}</div></div>
+`;
+
+    document.getElementById('academicInfo').innerHTML = `
+        <div><div class="info-label">Grade Level</div><div class="info-value" id="acadGrade">—</div></div>
+        <div><div class="info-label">Strand</div><div class="info-value" id="acadStrand">—</div></div>
+        <div><div class="info-label">Section</div><div class="info-value" id="acadSection">—</div></div>
+        <div><div class="info-label">School Year</div><div class="info-value">2026-2027</div></div>
+        <div><div class="info-label">Semester</div><div class="info-value">2nd Semester</div></div>
+        <div><div class="info-label">General Average</div><div class="info-value" id="profileGenAvg" style="color:var(--primary)">—</div></div>
+    `;
+
+     // profilePerformance will be populated by renderGrades()
+
+     // Populate section-based fields
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === String(userData?.id))
+    );
+    const gradeLabel   = mySection ? `Grade ${mySection.grade}` : '—';
+    const strandLabel  = mySection ? (mySection.strand || '—') : '—';
+    const sectionLabel = mySection ? (mySection.name || '—') : '—';
+    const combined     = mySection ? `${gradeLabel} · ${strandLabel} ${sectionLabel}` : '—';
+
+    const sidebarInfo = document.getElementById('sidebarSectionInfo');
+    if (sidebarInfo) sidebarInfo.textContent = combined;
+
+    const dashChip = document.getElementById('dashGradeChip');
+    if (dashChip) dashChip.textContent = `${gradeLabel} · ${strandLabel}`;
+
+    const schedTitle = document.getElementById('scheduleCardTitle');
+    if (schedTitle) schedTitle.textContent = combined;
+
+    const profileSub = document.getElementById('profileBannerSub');
+    if (profileSub) profileSub.textContent = `${gradeLabel} — ${strandLabel} Track, ${sectionLabel}`;
+
+    const acadGrade   = document.getElementById('acadGrade');
+    const acadStrand  = document.getElementById('acadStrand');
+    const acadSection = document.getElementById('acadSection');
+    if (acadGrade)   acadGrade.textContent   = gradeLabel;
+    if (acadStrand)  acadStrand.textContent  = strandLabel;
+    if (acadSection) acadSection.textContent = sectionLabel;
+
+}
+
+// ===== DATE =====
+function setDynamicDate() {
+    const now  = new Date();
+    const hour = now.getHours();
+    const greet = hour < 12 ? 'Good Morning! ☀️' : hour < 17 ? 'Good Afternoon! 🌤️' : 'Good Evening! 🌙';
+    document.getElementById('dashGreeting').textContent = greet;
+    document.getElementById('todayDate').textContent = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+// ===== NAVIGATION =====
+function navigate(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const target = document.getElementById('page-' + page);
+    if (target) target.classList.add('active');
+    const navItem = document.querySelector(`[data-page="${page}"]`);
+    if (navItem) navItem.classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+    if (page === 'announcements') loadAnnouncements(true);
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+    const dayMap = {1:'Monday',2:'Tuesday',3:'Wednesday',4:'Thursday',5:'Friday'};
+    const dayKey = dayMap[new Date().getDay()];
+    const schedEl = document.getElementById('todaySchedule');
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === String(currentUser.id))
+    );
+    const sectionKey = mySection ? `section_${mySection.id}` : null;
+    const savedSched = sectionKey ? JSON.parse(localStorage.getItem(`schedule_${sectionKey}`) || '{}') : {};
+
+    if (dayKey && Object.keys(savedSched).length) {
+        const TIME_SLOTS = [
+            '7:00 - 7:50 AM', '7:50 - 8:40 AM', '8:40 - 9:30 AM',
+            '9:50 - 10:40 AM', '10:40 - 11:30 AM',
+            '12:30 - 1:20 PM', '1:20 - 2:10 PM'
+        ];
+        const items = TIME_SLOTS.map(slot => {
+            const val = savedSched[slot]?.[dayKey];
+            if (!val) return '';
+            return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.25rem;border-bottom:1px solid var(--border);">
+                <span style="font-size:0.75rem;color:var(--text-light);min-width:95px;">${slot.split(' - ')[0]}</span>
+                <span class="subject-pill green">${val}</span>
+            </div>`;
+        }).filter(Boolean).join('');
+        schedEl.innerHTML = items || '<div class="empty-state"><p>No classes today 🎉</p></div>';
+    } else {
+        schedEl.innerHTML = '<div class="empty-state"><p>No schedule set yet.</p></div>';
+    }
+
+    const pending = ASSIGNMENTS.filter(a => a.status === 'pending');
+    document.getElementById('pendingCount').textContent = pending.length;
+    document.getElementById('assignBadge').textContent  = pending.length;
+
+    document.getElementById('dashAssignments').innerHTML = pending.length
+        ? pending.map(a => {
+            const days = Math.ceil((new Date(a.dueDate) - new Date()) / 86400000);
+            const dueColor = days < 0 ? 'var(--danger)' : days <= 2 ? 'var(--accent)' : 'var(--text-light)';
+            return `
+                <div class="assignment-card" style="margin-bottom:0.625rem;">
+                    <div class="assignment-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <div class="assignment-info">
+                        <div class="assignment-title">${a.title}</div>
+                        <div class="assignment-meta">
+                            <span>${a.subject}</span>
+                            <span style="color:${dueColor}">Due: ${new Date(a.dueDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+                        </div>
+                    </div>
+                    <span class="status-chip pending">Pending</span>
+                </div>`;
+        }).join('')
+        : '<div class="empty-state"><p>All caught up! ✅</p></div>';
+}
+
+function openAssignmentDetail(id) {
+    const a = ASSIGNMENTS.find(x => x.id === id);
+    if (!a) return;
+
+    const due  = new Date(a.dueDate);
+    const days = Math.ceil((due - new Date()) / 86400000);
+    const dueColor = days < 0 ? '#ef4444' : days <= 2 ? '#f59e0b' : '#10b981';
+    const dueTxt = days < 0 ? `Overdue (${Math.abs(days)}d ago)` : days === 0 ? 'Due Today!' : `Due in ${days} day(s)`;
+
+    let actionBtn = '';
+    if (a.status === 'pending') {
+        actionBtn = `<button class="btn-submit-final" onclick="closeDetailModal();openSubmitModal(${a.id})" style="margin-top:1rem;width:100%;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Submit Assignment
+        </button>`;
+    } else if (a.status === 'submitted') {
+        actionBtn = `<div style="margin-top:1rem;padding:0.75rem 1rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0.625rem;color:#166534;font-weight:600;font-size:0.875rem;">
+            ✅ Submitted on ${new Date(a.submittedAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}
+            ${a.submittedNotes ? `<div style="font-weight:400;margin-top:0.375rem;color:#15803d;">Notes: ${a.submittedNotes}</div>` : ''}
+            ${a.submittedFiles?.length ? `<div style="font-weight:400;margin-top:0.25rem;color:#15803d;">Files: ${a.submittedFiles.join(', ')}</div>` : ''}
+        </div>`;
+    } else if (a.status === 'graded') {
+        actionBtn = `<div style="margin-top:1rem;padding:0.75rem 1rem;background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.625rem;color:#1e40af;font-weight:600;font-size:0.875rem;">
+            🎓 Grade: ${a.grade}/${a.points}
+        </div>`;
+    }
+
+    const existing = document.getElementById('assignDetailModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'assignDetailModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.innerHTML = `
+        <div style="background:white;border-radius:1rem;width:100%;max-width:580px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid #e2e8f0;">
+                <h3 style="font-size:1.1rem;font-weight:700;margin:0;color:#0f172a;">${a.title}</h3>
+                <button onclick="closeDetailModal()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;">×</button>
+            </div>
+            <div style="padding:1.25rem 1.5rem;">
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+                    <span class="subject-pill ${a.color}" style="font-size:0.75rem;">${a.subject}</span>
+                    <span style="font-size:0.78rem;font-weight:600;color:${dueColor};background:${days<0?'#fef2f2':days<=2?'#fffbeb':'#f0fdf4'};padding:0.25rem 0.625rem;border-radius:999px;">📅 ${dueTxt}</span>
+                    <span style="font-size:0.78rem;font-weight:600;color:#6366f1;background:#eef2ff;padding:0.25rem 0.625rem;border-radius:999px;">📊 ${a.points} pts</span>
+                    <span style="font-size:0.78rem;font-weight:600;color:#475569;background:#f1f5f9;padding:0.25rem 0.625rem;border-radius:999px;">📁 ${(a.type||'homework').replace('-',' ')}</span>
+                    <span class="status-chip ${a.status}" style="font-size:0.75rem;">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span>
+                </div>
+                <div style="font-size:0.875rem;color:#334155;line-height:1.75;white-space:pre-wrap;margin-bottom:1rem;">${a.description}</div>
+                ${a.image ? `<img src="${a.image}" style="width:100%;max-height:300px;object-fit:contain;border-radius:0.625rem;border:1px solid #e2e8f0;margin-bottom:1rem;cursor:zoom-in;" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'300px':'none'">` : ''}
+                ${actionBtn}
+            </div>
+        </div>`;
+
+    modal.addEventListener('click', e => { if (e.target === modal) closeDetailModal(); });
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDetailModal() {
+    const modal = document.getElementById('assignDetailModal');
+    if (modal) modal.remove();
+    document.body.style.overflow = '';
+}   
+
+// ===== ANNOUNCEMENTS =====
+function loadAnnouncements(markAsRead = false) {
+    const stored = JSON.parse(localStorage.getItem('ffhnas_student_announcements') || '[]');
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+
+    // Count unread BEFORE marking as read
+    let unreadCount = 0;
+    if (currentUser.id) {
+        stored.forEach(ann => {
+            if (!ann.views) ann.views = [];
+            const alreadyViewed = ann.views.find(v => String(v.id) === String(currentUser.id));
+            if (!alreadyViewed) unreadCount++;
+        });
+
+        // Mark all as read if navigating to announcements page
+        if (markAsRead) {
+            stored.forEach(ann => {
+                if (!ann.views) ann.views = [];
+                const alreadyViewed = ann.views.find(v => String(v.id) === String(currentUser.id));
+                if (!alreadyViewed) {
+                    ann.views.push({
+                        id: currentUser.id,
+                        name: `${currentUser.first_name || ''} ${currentUser.last_name || ''}`.trim() || 'Student',
+                        viewed_at: new Date().toISOString()
+                    });
+                }
+            });
+            localStorage.setItem('ffhnas_student_announcements', JSON.stringify(stored));
+            unreadCount = 0;
+        }
+    }
+
+    // Update badge
+    const badge = document.getElementById('annBadge');
+    if (badge) {
+        badge.textContent = unreadCount;
+        badge.style.display = unreadCount > 0 ? 'inline' : 'none';
+    }
+
+    // Update notif dot in header
+    const notifDot = document.getElementById('notifDot');
+    if (notifDot) notifDot.style.display = unreadCount > 0 ? 'block' : 'none';
+
+    const renderAnn = (a) => {
+        const isUrgent = a.priority === 'urgent' || a.category === 'urgent';
+        const dateDisp = (a.date || a.created_at)
+            ? new Date(a.date || a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+            : '';
+        return `
+            <div class="announcement-item ${isUrgent ? 'urgent' : ''}">
+                <div class="ann-top">
+                    <span class="ann-badge ${isUrgent ? 'urgent' : 'info'}">${isUrgent ? 'Urgent' : 'Info'}</span>
+                </div>
+                <div class="ann-title">${a.title || ''}</div>
+                <div class="ann-content">${a.content || ''}</div>
+                <div class="ann-meta">
+                    <span>👤 ${a.postedBy || a.creator_name || 'Administrator'}</span>
+                    <span>📅 ${dateDisp}</span>
+                </div>
+            </div>`;
+    };
+
+    const empty = '<div class="empty-state"><p>No announcements yet.</p></div>';
+    const dash  = document.getElementById('dashAnnouncements');
+    const full  = document.getElementById('fullAnnouncements');
+    if (dash) dash.innerHTML = stored.length ? stored.slice(0,3).map(renderAnn).join('') : empty;
+    if (full) full.innerHTML = stored.length ? stored.map(renderAnn).join('') : empty;
+}
+
+// ===== SCHEDULE =====
+function renderSchedule() {
+    const tbody = document.getElementById('scheduleBody');
+    if (!tbody) return;
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === String(currentUser.id))
+    );
+
+    if (!mySection) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#94a3b8;">You are not enrolled in any section yet.</td></tr>`;
+        return;
+    }
+
+    const sectionKey = `section_${mySection.id}`;
+    const saved = JSON.parse(localStorage.getItem(`schedule_${sectionKey}`) || '{}');
+
+    const _defaultSlots = ['7:00 - 7:50 AM','7:50 - 8:40 AM','8:40 - 9:30 AM','9:30 - 9:50 AM (Break)','9:50 - 10:40 AM','10:40 - 11:30 AM','11:30 AM - 12:30 PM (Lunch)','12:30 - 1:20 PM','1:20 - 2:10 PM'];
+    const TIME_SLOTS = JSON.parse(localStorage.getItem(`ffhnas_timeslots_grade${mySection.grade}`) || 'null') || _defaultSlots;
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+    if (!Object.keys(saved).length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#94a3b8;">No schedule set yet. Your teacher hasn't inputted the schedule.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = TIME_SLOTS.map(slot => {
+        const isBreak = slot.includes('Break') || slot.includes('Lunch');
+        if (isBreak) {
+            return `<tr class="break-row">
+                <td style="font-weight:600;color:var(--text-light);white-space:nowrap;">${slot}</td>
+                <td colspan="5">${slot.includes('Lunch') ? 'Lunch Break' : 'Break'}</td>
+            </tr>`;
+        }
+        return `<tr>
+            <td style="font-weight:600;color:var(--dark);white-space:nowrap;">${slot}</td>
+            ${DAYS.map(d => {
+                const val = saved[slot]?.[d] || '—';
+                const hasSubject = val && val !== '—';
+                return `<td>${hasSubject ? `<span class="subject-pill green">${val}</span>` : `<span style="color:#94a3b8;">—</span>`}</td>`;
+            }).join('')}
+        </tr>`;
+    }).join('');
+}
+
+// ===== GRADES =====
+
+function loadStudentGrades() {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!currentUser) return;
+
+    const studentId = String(currentUser.id);
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+
+    // Find all sections this student belongs to
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === studentId)
+    );
+
+    const gradesContainer = document.getElementById('studentGradesBody'); // adjust to your element ID
+    if (!gradesContainer) return;
+
+    if (!mySection) {
+        gradesContainer.innerHTML = `<div class="empty-state"><p>You are not enrolled in any section yet.</p></div>`;
+        return;
+    }
+
+    const sectionKey = `section_${mySection.id}`;
+    const saved = JSON.parse(localStorage.getItem(`grades_${sectionKey}`) || '{}');
+    const myGrades = saved[studentId];
+
+    if (!myGrades) {
+        gradesContainer.innerHTML = `<div class="empty-state"><p>No grades recorded yet.</p></div>`;
+        return;
+    }
+
+    const q1 = myGrades.q1 !== '' && myGrades.q1 != null ? parseFloat(myGrades.q1) : null;
+    const q2 = myGrades.q2 !== '' && myGrades.q2 != null ? parseFloat(myGrades.q2) : null;
+    const q3 = myGrades.q3 !== '' && myGrades.q3 != null ? parseFloat(myGrades.q3) : null;
+    const q4 = myGrades.q4 !== '' && myGrades.q4 != null ? parseFloat(myGrades.q4) : null;
+
+    const filled = [q1, q2, q3, q4].filter(v => v !== null && !isNaN(v));
+    const final = filled.length ? (filled.reduce((a, b) => a + b, 0) / filled.length).toFixed(1) : '—';
+    const remarks = f => f >= 90 ? 'Excellent' : f >= 80 ? 'Good' : f >= 75 ? 'Passing' : 'Failed';
+    const badgeClass = f => f >= 90 ? 'excellent' : f >= 80 ? 'good' : f >= 75 ? 'average' : 'low';
+
+    gradesContainer.innerHTML = `
+        <tr>
+            <td>${mySection.name}</td>
+            <td>${q1 ?? '—'}</td>
+            <td>${q2 ?? '—'}</td>
+            <td>${q3 ?? '—'}</td>
+            <td>${q4 ?? '—'}</td>
+            <td><strong>${final}</strong></td>
+            <td><span class="grade-badge ${badgeClass(parseFloat(final))}">${remarks(parseFloat(final))}</span></td>
+        </tr>`;
+}
+
+function renderGrades() {
+    const table = document.getElementById('gradesTable');
+    if (!table) return;
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+
+    // Find ALL sections this student belongs to
+    const mySections = allSections.filter(s =>
+        (s.students || []).some(st => String(st.id) === String(currentUser.id))
+    );
+
+    const gClass = g => g >= 90 ? 'excellent' : g >= 85 ? 'good' : g >= 75 ? 'average' : 'low';
+    const gColor = g => g >= 90 ? '#10b981' : g >= 85 ? '#3b82f6' : g >= 75 ? '#f59e0b' : '#ef4444';
+
+    // Build one row per subject teacher (including main teacher if they have grades)
+    const rows = [];
+    mySections.forEach(s => {
+        const sectionKey = `section_${s.id}`;
+
+        // Helper to read grades for a given subject slug
+        const readGrades = (subjectSlug) => {
+            const saved = JSON.parse(localStorage.getItem(`grades_${sectionKey}_${subjectSlug}`) || '{}');
+            const g = saved[String(currentUser.id)];
+            if (!g) return null;
+            const q1 = g.q1 !== '' && g.q1 != null ? parseFloat(g.q1) : null;
+            const q2 = g.q2 !== '' && g.q2 != null ? parseFloat(g.q2) : null;
+            const q3 = g.q3 !== '' && g.q3 != null ? parseFloat(g.q3) : null;
+            const q4 = g.q4 !== '' && g.q4 != null ? parseFloat(g.q4) : null;
+            return { q1, q2, q3, q4 };
+        };
+
+        const toSlug = str => (str || 'main').toLowerCase().replace(/\s+/g, '_');
+        const calcAvg = ({ q1, q2, q3, q4 }) => {
+            const filled = [q1, q2, q3, q4].filter(v => v !== null && !isNaN(v));
+            return filled.length ? (filled.reduce((a, b) => a + b, 0) / filled.length).toFixed(1) : null;
+        };
+
+        // Main teacher row
+        const mainSlug = toSlug(s.subject || 'main');
+        const mainGrades = readGrades(mainSlug);
+        if (mainGrades) {
+            rows.push({ name: s.subject || `${s.strand} - Grade ${s.grade}`, teacher: s.teacher || '—', ...mainGrades, avg: calcAvg(mainGrades) });
+        }
+
+        // Subject teachers rows
+        (s.subject_teachers || []).forEach(t => {
+            const slug = toSlug(t.subject);
+            const grades = readGrades(slug);
+            if (grades) {
+                rows.push({ name: t.subject || `${s.strand} - Grade ${s.grade}`, teacher: t.teacher || '—', ...grades, avg: calcAvg(grades) });
+            }
+        });
+
+        // Fallback: show all subject teachers even with no grades yet
+        if (!mainGrades && !(s.subject_teachers || []).length) {
+            rows.push({ name: s.subject || `${s.strand} - Grade ${s.grade}`, teacher: s.teacher || '—', q1: null, q2: null, q3: null, q4: null, avg: null });
+        }
+        if (!mainGrades && s.subject) {
+            // show main subject row with empty grades so teacher is visible
+            rows.push({ name: s.subject, teacher: s.teacher || '—', q1: null, q2: null, q3: null, q4: null, avg: null });
+        }
+        (s.subject_teachers || []).forEach(t => {
+            const slug = toSlug(t.subject);
+            const grades = readGrades(slug);
+            if (!grades) {
+                rows.push({ name: t.subject || `${s.strand} - Grade ${s.grade}`, teacher: t.teacher || '—', q1: null, q2: null, q3: null, q4: null, avg: null });
+            }
+        });
+    });
+
+    // Deduplicate rows by name+teacher
+    const seen = new Set();
+    const uniqueRows = rows.filter(r => {
+        const key = `${r.name}_${r.teacher}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+    const finalRows = uniqueRows;
+
+    if (!mySections.length) {
+    table.innerHTML = `<thead><tr><th>Subject/Section</th><th>Teacher</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Average</th><th>Performance</th></tr></thead>
+        <tbody><tr><td colspan="8" style="text-align:center;padding:2rem;color:#94a3b8;">You are not enrolled in any section yet.</td></tr></tbody>`;
+    // Clear stat cards
+    const statCards = document.querySelectorAll('#page-grades .stat-value');
+    if (statCards[0]) statCards[0].textContent = '—';
+    if (statCards[1]) statCards[1].textContent = '—';
+    if (statCards[2]) statCards[2].textContent = '—';
+    const perfEl = document.getElementById('profilePerformance');
+    if (perfEl) perfEl.innerHTML = '<div class="empty-state"><p>No grade data yet.</p></div>';
+    return;
+}
+if (!finalRows.length) {
+    table.innerHTML = `<thead><tr><th>Subject/Section</th><th>Teacher</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Average</th><th>Performance</th></tr></thead>
+        <tbody><tr><td colspan="8" style="text-align:center;padding:2rem;color:#94a3b8;">No grades recorded yet.</td></tr></tbody>`;
+    return;
+}
+
+    const display = v => v !== null ? `<span class="grade-pill ${gClass(v)}">${v}</span>` : '<span style="color:#94a3b8;">—</span>';
+
+    table.innerHTML = `
+        <thead>
+            <tr><th>Subject/Section</th><th>Teacher</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Average</th><th>Performance</th></tr>
+        </thead>
+        <tbody>
+             ${finalRows.map(s => `
+                <tr>
+                    <td><strong style="color:var(--dark)">${s.name}</strong></td>
+                    <td style="color:var(--text-light)">${s.teacher}</td>
+                    <td>${display(s.q1)}</td>
+                    <td>${display(s.q2)}</td>
+                    <td>${display(s.q3)}</td>
+                    <td>${display(s.q4)}</td>
+                    <td><strong style="color:var(--dark)">${s.avg ?? '—'}</strong></td>
+                    <td>
+                        <div class="grade-bar-wrap">
+                            <div class="grade-bar"><div class="grade-bar-fill" style="width:${s.avg ?? 0}%;background:${s.avg ? gColor(s.avg) : '#e2e8f0'}"></div></div>
+                            <span style="font-size:0.75rem;color:var(--text-light);min-width:28px">${s.avg ?? '—'}</span>
+                        </div>
+                    </td>
+                </tr>`).join('')}
+        </tbody>`;
+
+    // Update performance bars
+    const bars = document.getElementById('performanceBars');
+    if (bars) {
+        bars.innerHTML = finalRows.map(s => `
+            <div class="progress-item">
+                <div class="progress-label"><span class="progress-name">${s.name}</span><span class="progress-val">${s.avg ?? '—'}</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${s.avg ?? 0}%"></div></div>
+            </div>`).join('');
+    }
+
+    // Update stat cards
+    const validAvgs = finalRows.map(s => parseFloat(s.avg)).filter(v => !isNaN(v));
+    const passing = validAvgs.filter(g => g >= 75).length;
+    const genAvg = validAvgs.length ? (validAvgs.reduce((a, b) => a + b, 0) / validAvgs.length).toFixed(1) : '—';
+
+    const statCards = document.querySelectorAll('#page-grades .stat-value');
+     if (statCards[0]) statCards[0].textContent = genAvg;
+    if (statCards[2]) statCards[2].textContent = `${passing}/${finalRows.length}`;
+
+    const getStanding = avg => {
+        const g = parseFloat(avg);
+        if (isNaN(g)) return '—';
+        if (g >= 97.5) return 'Outstanding - W/Highest Honor';
+        if (g >= 94.5) return 'Outstanding - W/High Honor';
+        if (g >= 89.5) return 'Outstanding - W/Honor';
+        if (g >= 85) return 'Very Satisfactory';
+        if (g >= 80) return 'Satisfactory';
+        if (g >= 75) return 'Fairly Satisfactory';
+        return 'Did Not Meet Requirements';
+    };
+    if (statCards[1]) statCards[1].textContent = getStanding(genAvg);
+
+    // Update profile general average
+    const profileAvgEl = document.getElementById('profileGenAvg');
+    if (profileAvgEl) profileAvgEl.textContent = genAvg;
+
+    // Update profile performance bars with real data
+    const perfEl = document.getElementById('profilePerformance');
+    if (perfEl) {
+        perfEl.innerHTML = finalRows.length
+            ? finalRows.map(s => `
+                <div class="progress-item">
+                    <div class="progress-label"><span class="progress-name">${s.name} <span style="font-size:0.75rem;color:var(--text-light);">(${s.teacher})</span></span><span class="progress-val">${s.avg ?? '—'}</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${s.avg ?? 0}%"></div></div>
+                </div>`).join('')
+            : '<div class="empty-state"><p>No grade data yet.</p></div>';
+    }
+
+    // Update dashboard average grade stat card
+    const dashStatCards = document.querySelectorAll('#page-dashboard .stat-value');
+    if (dashStatCards[0]) dashStatCards[0].textContent = genAvg;
+
+    // Update academicInfo general average
+    const acadAvgEl = document.getElementById('profileGenAvg');
+    if (acadAvgEl) acadAvgEl.textContent = genAvg;
+}
+
+// ===== ASSIGNMENTS =====
+function renderAssignments() {
+    const container = document.getElementById('assignmentsList');
+    if (!container) return;
+
+    const filter        = document.getElementById('assignFilter')?.value || 'all';
+    const subjectFilter = document.getElementById('assignSubjectFilter')?.value || 'all';
+    const filtered = ASSIGNMENTS
+        .filter(a => filter === 'all' || a.status === filter)
+        .filter(a => subjectFilter === 'all' || a.subject === subjectFilter);
+
+    if (!filtered.length) {
+    container.innerHTML = '<div class="empty-state"><p>No assignments yet.</p></div>';
+    return;
+}
+
+    container.innerHTML = filtered.map(a => {
+        const due  = new Date(a.dueDate);
+        const days = Math.ceil((due - new Date()) / 86400000);
+        const dueColor = days < 0 ? 'var(--danger)' : days <= 2 ? 'var(--accent)' : 'var(--text-light)';
+        const dueTxt   = days < 0 ? `Overdue (${Math.abs(days)}d ago)` : days === 0 ? 'Due Today!' : `Due in ${days}d`;
+
+        let actionHtml = '';
+        if (a.status === 'pending') {
+            actionHtml = `<button class="btn-open-submit" onclick="event.stopPropagation();openSubmitModal(${a.id})">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Submit
+            </button>`;
+        } else if (a.status === 'submitted') {
+            actionHtml = `<div class="submitted-info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Submitted ${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : ''}
+            </div>
+            ${a.submittedFiles && a.submittedFiles.length ? `<span style="font-size:0.75rem;color:var(--text-light)">${a.submittedFiles.length} file(s)</span>` : ''}`;
+        } else if (a.status === 'graded') {
+            actionHtml = `<div style="text-align:right;">
+                <div style="font-size:1.1rem;font-weight:800;color:var(--primary)">${a.grade}/${a.points}</div>
+                <div style="font-size:0.75rem;color:var(--text-light)">Grade</div>
+            </div>`;
+        }
+
+        return `
+            <div class="assignment-card" onclick="openAssignmentDetail(${a.id})" style="cursor:pointer;">
+                <div class="assignment-icon" style="background:rgba(var(--${a.color}-rgb,16,185,129),0.1)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+                </div>
+                <div class="assignment-info">
+                    <div class="assignment-title">${a.title}</div>
+                    <div class="assignment-meta">
+                        <span class="subject-pill ${a.color}" style="font-size:0.72rem;padding:0.2rem 0.5rem;">${a.subject}</span>
+                        <span style="color:${dueColor};font-weight:600;">📅 ${dueTxt}</span>
+                        <span>📊 ${a.points} pts</span>
+                    </div>
+                    <div class="assignment-desc">${a.description}</div>
+                    ${a.image ? `<img src="${a.image}" style="margin-top:0.625rem;max-height:140px;border-radius:0.5rem;border:1px solid var(--border);object-fit:cover;display:block;">` : ''}
+                </div>
+                <div class="assignment-actions">
+                    <span class="status-chip ${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span>
+                    ${actionHtml}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function populateSubjectFilter() {
+    const sel = document.getElementById('assignSubjectFilter');
+    if (!sel) return;
+    const subjects = [...new Set(ASSIGNMENTS.map(a => a.subject).filter(Boolean))];
+    sel.innerHTML = '<option value="all">All Subjects</option>' +
+        subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+
+// ===== SUBMIT MODAL =====
+function openSubmitModal(id) {
+    const a = ASSIGNMENTS.find(x => x.id === id);
+    if (!a) return;
+    currentSubmitId = id;
+    selectedFiles   = [];
+
+    document.getElementById('modalTitle').textContent = 'Submit: ' + a.title;
+    document.getElementById('submitAssignmentId').value = id;
+
+    const due  = new Date(a.dueDate);
+    const days = Math.ceil((due - new Date()) / 86400000);
+    const dueColor = days < 0 ? '#ef4444' : days <= 2 ? '#f59e0b' : '#10b981';
+
+    document.getElementById('modalAssignmentInfo').innerHTML = `
+        <h4>${a.title}</h4>
+        <p>${a.description}</p>
+        <div class="meta">
+            <span>📚 ${a.subject}</span>
+            <span style="color:${dueColor};font-weight:600;">📅 Due: ${due.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</span>
+            <span>📊 ${a.points} points</span>
+        </div>`;
+
+    // Pre-fill student name
+    let userData = null;
+    try { userData = JSON.parse(localStorage.getItem('loggedInUser')); } catch(e) {}
+    const fullName = userData
+        ? (userData.first_name ? `${userData.first_name} ${userData.last_name || ''}`.trim() : userData.name || '')
+        : '';
+    document.getElementById('submitStudentName').value = fullName;
+    document.getElementById('submitNotes').value = '';
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('fileInput').value   = '';
+
+    document.getElementById('submitModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSubmitModal(e) {
+    if (e.target === document.getElementById('submitModal')) closeSubmitModalDirect();
+}
+
+function closeSubmitModalDirect() {
+    document.getElementById('submitModal').classList.remove('open');
+    document.body.style.overflow = '';
+    selectedFiles   = [];
+    currentSubmitId = null;
+}
+
+async function handleSubmit(e) {
+    e.preventDefault();
+    const name  = document.getElementById('submitStudentName').value.trim();
+    const notes = document.getElementById('submitNotes').value.trim();
+
+    if (!name) { showToast('Error', 'Please enter your name.', 'error'); return; }
+
+    const a = ASSIGNMENTS.find(x => x.id === currentSubmitId);
+    if (!a) return;
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const submitBtn = document.querySelector('.btn-submit-final');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading...'; }
+
+    // Upload image files to server, keep non-image filenames as-is
+    const uploadedFileNames = [];
+    for (const file of selectedFiles) {
+        const isImage = file.type.startsWith('image/');
+        if (isImage) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('student_id', currentUser.id || 'unknown');
+            formData.append('assignment_id', a.id);
+            try {
+                const res = await fetch('http://localhost/school/api/upload_submission.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    uploadedFileNames.push({ name: file.name, url: data.url });
+                } else {
+                    showToast('Upload Failed', data.message || `Could not upload ${file.name}`, 'error');
+                }
+            } catch {
+                showToast('Upload Error', `Could not upload ${file.name}. Check server connection.`, 'error');
+            }
+        } else {
+            uploadedFileNames.push({ name: file.name, url: null });
+        }
+    }
+
+    // Update assignment state
+    a.status         = 'submitted';
+    a.submittedAt    = new Date().toISOString().split('T')[0];
+    a.submittedNotes = notes;
+    a.submittedFiles = uploadedFileNames.map(f => f.name);
+
+    // Persist to localStorage — store URLs so teacher can view images
+    const key = `student_submissions_${currentUser.id}`;
+    const saved = JSON.parse(localStorage.getItem(key) || '{}');
+    saved[a.id] = {
+        status: 'submitted',
+        submittedAt: a.submittedAt,
+        submittedFiles: a.submittedFiles,
+        submittedNotes: notes
+    };
+    localStorage.setItem(key, JSON.stringify(saved));
+
+    // Store image URLs separately for teacher preview
+    const fileUrls = JSON.parse(localStorage.getItem(`submission_files_${currentUser.id}`) || '{}');
+    uploadedFileNames.forEach(f => { if (f.url) fileUrls[f.name] = f.url; });
+    localStorage.setItem(`submission_files_${currentUser.id}`, JSON.stringify(fileUrls));
+
+    closeSubmitModalDirect();
+    renderAssignments();
+    renderDashboard();
+
+    showToast('Assignment Submitted! ✅', `"${a.title}" submitted with ${uploadedFileNames.length} file(s).`, 'success');
+}
+
+// ===== FILE HANDLING =====
+function handleFileSelect(e) {
+    addFiles(Array.from(e.target.files));
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('fileDropZone').classList.add('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('fileDropZone').classList.remove('drag-over');
+    addFiles(Array.from(e.dataTransfer.files));
+}
+
+function addFiles(files) {
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    files.forEach(file => {
+        if (file.size > MAX_SIZE) {
+            showToast('File Too Large', `${file.name} exceeds 10MB limit.`, 'error');
+            return;
+        }
+        if (selectedFiles.find(f => f.name === file.name)) return; // No duplicates
+        selectedFiles.push(file);
+        renderFileList();
+    });
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    renderFileList();
+}
+
+function getFileIconType(file) {
+    if (file.type.startsWith('image/')) return 'image';
+    if (file.type === 'application/pdf') return 'pdf';
+    if (file.type.includes('word') || file.type.includes('document')) return 'doc';
+    return 'other';
+}
+
+function getFileIconSVG(type) {
+    const icons = {
+        image: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
+        pdf:   `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+        doc:   `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>`,
+        other: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`
+    };
+    return icons[type] || icons.other;
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024)        return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function renderFileList() {
+    const list = document.getElementById('fileList');
+    if (!list) return;
+
+    if (!selectedFiles.length) {
+        list.innerHTML = '';
+        return;
+    }
+
+    list.innerHTML = selectedFiles.map((file, i) => {
+        const iconType = getFileIconType(file);
+        const isImage  = iconType === 'image';
+
+        let previewHtml = '';
+        if (isImage) {
+            const url = URL.createObjectURL(file);
+            previewHtml = `<img src="${url}" class="file-item-preview" alt="preview" onload="URL.revokeObjectURL(this.src)">`;
+        }
+
+        return `
+            <div class="file-item">
+                ${isImage ? previewHtml : `<div class="file-item-icon ${iconType}">${getFileIconSVG(iconType)}</div>`}
+                <div class="file-item-info">
+                    <div class="file-item-name">${file.name}</div>
+                    <div class="file-item-size">${formatFileSize(file.size)}</div>
+                </div>
+                <button class="file-remove-btn" onclick="removeFile(${i})" title="Remove">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>`;
+    }).join('');
+}
+
+// ===== ATTENDANCE =====
+function renderAttendance() {
+    const table = document.getElementById('attendanceTable');
+    if (!table) return;
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const mySection = allSections.find(s =>
+        (s.students || []).some(st => String(st.id) === String(currentUser.id))
+    );
+    const mySectionKey = mySection ? `section_${mySection.id}` : null;
+
+    // Gather all attendance records for this student across all dates
+    const records = [];
+    if (mySectionKey) {
+        // Scan all localStorage keys for attendance entries for this section
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(`attendance_${mySectionKey}_`)) {
+                const date = key.replace(`attendance_${mySectionKey}_`, '');
+                const dayData = JSON.parse(localStorage.getItem(key) || '{}');
+                const status = dayData[String(currentUser.id)];
+                if (status) {
+                    records.push({ date, status });
+                }
+            }
+        }
+    }
+
+    // Sort by date descending
+    records.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const present = records.filter(r => r.status === 'Present').length;
+    const absent  = records.filter(r => r.status === 'Absent').length;
+    const late    = records.filter(r => r.status === 'Late').length;
+    const total   = records.length;
+    const rate    = total ? Math.round((present / total) * 100) : 0;
+
+    // Update summary stats
+    const sumCards = document.querySelectorAll('.att-stat-value');
+    if (sumCards[0]) sumCards[0].textContent = present;
+    if (sumCards[1]) sumCards[1].textContent = absent;
+    if (sumCards[2]) sumCards[2].textContent = late;
+    if (sumCards[3]) sumCards[3].textContent = total;
+
+    // Update rate label
+    const rateLabel = document.querySelector('#page-attendance .card-header span');
+    if (rateLabel) rateLabel.textContent = `${rate}% Rate`;
+
+    if (!records.length) {
+        table.innerHTML = `<thead><tr><th>Date</th><th>Status</th></tr></thead>
+            <tbody><tr><td colspan="2" style="text-align:center;padding:2rem;color:var(--text-light);">No attendance records yet. Your teacher hasn't saved attendance.</td></tr></tbody>`;
+        return;
+    }
+
+    table.innerHTML = `
+        <thead>
+            <tr><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            ${records.map(r => `
+                <tr>
+                    <td style="color:var(--dark);font-weight:500">${new Date(r.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}</td>
+                    <td><span class="att-badge ${r.status.toLowerCase()}">${r.status}</span></td>
+                </tr>`).join('')}
+        </tbody>`;
+}
+
+// ===== CALENDAR =====
+function renderCalendar() {
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('calMonthLabel').textContent = `${MONTHS[calMonth]} ${calYear}`;
+
+    const wdEl = document.getElementById('calWeekdays');
+    if (wdEl) wdEl.innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+    const daysEl = document.getElementById('calDays');
+    if (!daysEl) return;
+
+    const events = getSchoolEvents();
+    const eventMap = {};
+    events.forEach(e => { eventMap[e.date] = e; });
+
+    const typeColors = { holiday:'#ef4444', academic:'#3b82f6', event:'#8b5cf6', exam:'#f59e0b' };
+
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const lastDate = new Date(calYear, calMonth + 1, 0).getDate();
+    const prevLast = new Date(calYear, calMonth, 0).getDate();
+    const today    = new Date();
+    let html = '';
+
+    for (let i = firstDay - 1; i >= 0; i--) html += `<div class="cal-day other">${prevLast - i}</div>`;
+
+    for (let d = 1; d <= lastDate; d++) {
+        const ds  = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const ev  = eventMap[ds];
+        const isToday = today.getDate()===d && today.getMonth()===calMonth && today.getFullYear()===calYear;
+        const dotColor = ev ? (typeColors[ev.type] || '#64748b') : '';
+        html += `<div class="cal-day ${isToday?'today':''} ${ev?'has-event':''}" ${ev ? `title="${ev.title}"` : ''}>
+            ${d}${ev ? `<span class="event-dot ${ev.type}" style="background:${dotColor}"></span>` : ''}
+        </div>`;
+    }
+
+    const total = firstDay + lastDate;
+    const rem   = total <= 35 ? 35 - total : 42 - total;
+    for (let i = 1; i <= rem; i++) html += `<div class="cal-day other">${i}</div>`;
+
+    daysEl.innerHTML = html;
+}
+
+function changeMonth(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0)  { calMonth = 11; calYear--; }
+    renderCalendar();
+}
+
+function renderEventsList(containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    const events = getSchoolEvents();
+    const now = new Date();
+    const typeColors = { holiday:'#ef4444', academic:'#3b82f6', event:'#8b5cf6', exam:'#f59e0b' };
+
+    const upcoming = events
+        .map(e => ({ ...e, dateObj: new Date(e.date + 'T00:00:00') }))
+        .filter(e => e.dateObj >= now)
+        .sort((a, b) => a.dateObj - b.dateObj)
+        .slice(0, 5);
+
+    el.innerHTML = upcoming.length
+        ? upcoming.map(e => `
+            <div class="event-item ${e.type}">
+                <div class="event-date-box">
+                    <div class="event-day-num">${e.dateObj.getDate()}</div>
+                    <div class="event-month-str">${e.dateObj.toLocaleString('en-US',{month:'short'})}</div>
+                </div>
+                <div class="event-info">
+                    <h4>${e.title}</h4>
+                    <p>${e.dateObj.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+                    ${e.description ? `<p style="font-size:0.75rem;color:var(--text-light);margin-top:0.2rem;">${e.description}</p>` : ''}
+                </div>
+                <span class="event-type-chip ${e.type}" style="background:${typeColors[e.type]}22;color:${typeColors[e.type]}">${e.type.charAt(0).toUpperCase()+e.type.slice(1)}</span>
+            </div>`).join('')
+        : '<div class="empty-state"><p>No upcoming events</p></div>';
+}
+
+// ===== UTILITIES =====
+function toggleNotifications() {
+    const stored = JSON.parse(localStorage.getItem('ffhnas_student_announcements') || '[]');
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const unread = currentUser.id
+        ? stored.filter(ann => !(ann.views || []).find(v => String(v.id) === String(currentUser.id))).length
+        : stored.length;
+    showToast('Notifications', `You have ${unread} unread announcement${unread !== 1 ? 's' : ''}`, 'info');
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('loggedInUser');
+        showToast('Logged Out', 'Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1000);
+    }
+}
+
+function showToast(title, message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-msg">${message}</div>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.transition = '0.3s';
+        toast.style.opacity    = '0';
+        toast.style.transform  = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// ===== SETTINGS =====
+function loadSettingsForm() {
+    let userData = null;
+    try { userData = JSON.parse(localStorage.getItem('loggedInUser')); } catch(e) {}
+    if (!userData) return;
+    document.getElementById('settingsFirstName').value = userData.first_name || '';
+    document.getElementById('settingsLastName').value = userData.last_name || '';
+    document.getElementById('settingsEmail').value = userData.email || '';
+
+    // Check if there's a pending request for this user
+    const allPending = JSON.parse(localStorage.getItem('ffhnas_profile_change_requests') || '[]');
+    const hasPending = allPending.some(r => r.userId == userData.id && r.status === 'pending');
+    const notice = document.getElementById('settingsPendingNotice');
+    if (notice) notice.style.display = hasPending ? 'block' : 'none';
+}
+
+function submitProfileChange(e) {
+    e.preventDefault();
+    const userData = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!userData) return;
+
+    const firstName = document.getElementById('settingsFirstName').value.trim();
+    const lastName = document.getElementById('settingsLastName').value.trim();
+    const email = document.getElementById('settingsEmail').value.trim();
+
+    if (!firstName || !lastName || !email) { showToast('Error', 'Please fill in all fields.', 'error'); return; }
+
+    // Check if there's already a pending request
+    const allPending = JSON.parse(localStorage.getItem('ffhnas_profile_change_requests') || '[]');
+    const existingIdx = allPending.findIndex(r => r.userId == userData.id && r.status === 'pending');
+    if (existingIdx !== -1) {
+        showToast('Pending', 'You already have a pending change request. Please wait for admin approval.', 'error');
+        return;
+    }
+
+    const request = {
+        id: Date.now(),
+        userId: userData.id,
+        userEmail: userData.email,
+        userName: `${userData.first_name} ${userData.last_name}`,
+        type: 'profile',
+        newData: { first_name: firstName, last_name: lastName, email },
+        status: 'pending',
+        submitted_at: new Date().toISOString()
+    };
+
+    allPending.push(request);
+    localStorage.setItem('ffhnas_profile_change_requests', JSON.stringify(allPending));
+
+    document.getElementById('settingsPendingNotice').style.display = 'block';
+    showToast('Request Submitted ✅', 'Your profile change is pending admin approval.', 'success');
+}
+
+async function submitPasswordChange() {
+    const userData = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!userData) return;
+
+    const currentPw = document.getElementById('settingsCurrentPw').value;
+    const newPw = document.getElementById('settingsNewPw').value;
+    const confirmPw = document.getElementById('settingsConfirmPw').value;
+
+    if (!currentPw || !newPw || !confirmPw) { showToast('Error', 'Please fill in all password fields.', 'error'); return; }
+    if (newPw !== confirmPw) { showToast('Error', 'New passwords do not match.', 'error'); return; }
+    if (newPw.length < 6) { showToast('Error', 'Password must be at least 6 characters.', 'error'); return; }
+
+    try {
+        const res = await fetch('http://localhost/school/api/settings.php', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: userData.id, current_password: currentPw, new_password: newPw })
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('settingsCurrentPw').value = '';
+            document.getElementById('settingsNewPw').value = '';
+            document.getElementById('settingsConfirmPw').value = '';
+            showToast('Password Updated ✅', 'Your password has been changed successfully.', 'success');
+        } else {
+            showToast('Error', data.message || 'Failed to update password.', 'error');
+        }
+    } catch {
+        showToast('Error', 'Cannot connect to server.', 'error');
+    }
+}
+
+// ===== SCHOOL SERVICES =====
+
+// --- BMI ---
+function calcBMI() {
+    const w = parseFloat(document.getElementById('bmiWeight').value);
+    const h = parseFloat(document.getElementById('bmiHeight').value) / 100;
+    if (!w || !h || w <= 0 || h <= 0) { showToast('Error', 'Please enter valid weight and height.', 'error'); return; }
+
+    const bmi = (w / (h * h)).toFixed(1);
+    let category, color, advice, pct;
+
+    if (bmi < 18.5)      { category = 'Underweight'; color = '#3b82f6'; advice = 'Consider a balanced diet with more nutrients.'; pct = (bmi / 40) * 100 * 0.45; }
+    else if (bmi < 25)   { category = 'Normal Weight'; color = '#10b981'; advice = 'Great! Maintain your healthy lifestyle.'; pct = 25 + ((bmi - 18.5) / 6.5) * 15; }
+    else if (bmi < 30)   { category = 'Overweight'; color = '#f59e0b'; advice = 'Try regular exercise and a balanced diet.'; pct = 40 + ((bmi - 25) / 5) * 20; }
+    else                 { category = 'Obese'; color = '#ef4444'; advice = 'Please consult your school clinic or a doctor.'; pct = Math.min(95, 60 + ((bmi - 30) / 10) * 35); }
+
+    const result = document.getElementById('bmiResult');
+    result.style.display = 'block';
+    document.getElementById('bmiValue').textContent = bmi;
+    document.getElementById('bmiValue').style.color = color;
+    document.getElementById('bmiCategory').textContent = category;
+    document.getElementById('bmiCategory').style.color = color;
+    document.getElementById('bmiAdvice').textContent = advice;
+    document.getElementById('bmiMarker').style.left = `${Math.min(95, Math.max(5, pct))}%`;
+}
+
+// --- GWA ---
+let gwaRowCount = 0;
+function addGwaRow() {
+    gwaRowCount++;
+    const row = document.createElement('div');
+    row.id = `gwaRow_${gwaRowCount}`;
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 80px 30px;gap:0.4rem;align-items:center;';
+    row.innerHTML = `
+        <input type="text" placeholder="Subject name" style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.82rem;width:100%;">
+        <input type="number" placeholder="Grade" min="60" max="100" step="0.1" style="padding:0.45rem 0.6rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.82rem;width:100%;text-align:center;">
+        <button onclick="removeGwaRow(${gwaRowCount})" style="background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:0.4rem;cursor:pointer;font-weight:700;font-size:0.9rem;padding:0.3rem 0.5rem;">×</button>`;
+    document.getElementById('gwaRows').appendChild(row);
+}
+function removeGwaRow(id) {
+    document.getElementById(`gwaRow_${id}`)?.remove();
+}
+function calcGWA() {
+    const rows = document.querySelectorAll('#gwaRows > div');
+    if (!rows.length) { showToast('Error', 'Add at least one subject.', 'error'); return; }
+    const grades = [];
+    rows.forEach(r => {
+        const g = parseFloat(r.querySelectorAll('input')[1].value);
+        if (!isNaN(g)) grades.push(g);
+    });
+    if (!grades.length) { showToast('Error', 'Please enter at least one grade.', 'error'); return; }
+
+    const gwa = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2);
+    const standing = parseFloat(gwa) >= 97.5 ? 'With Highest Honors 🥇'
+        : parseFloat(gwa) >= 94.5 ? 'With High Honors 🥈'
+        : parseFloat(gwa) >= 89.5 ? 'With Honors 🏅'
+        : parseFloat(gwa) >= 85   ? 'Very Satisfactory'
+        : parseFloat(gwa) >= 80   ? 'Satisfactory'
+        : parseFloat(gwa) >= 75   ? 'Fairly Satisfactory'
+        : 'Did Not Meet Expectations';
+
+    const color = parseFloat(gwa) >= 89.5 ? '#10b981' : parseFloat(gwa) >= 75 ? '#3b82f6' : '#ef4444';
+    const result = document.getElementById('gwaResult');
+    result.style.display = 'block';
+    document.getElementById('gwaValue').textContent = gwa;
+    document.getElementById('gwaValue').style.color = color;
+    document.getElementById('gwaStanding').textContent = standing;
+    document.getElementById('gwaStanding').style.color = color;
+}
+
+// --- TEMPERATURE ---
+let tempUnit = 'C';
+function setTempUnit(unit) {
+    tempUnit = unit;
+    document.getElementById('tempUnitLabel').textContent = `°${unit}`;
+    document.getElementById('btnC').style.cssText = unit === 'C'
+        ? 'padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#fee2e2;color:#ef4444;border:2px solid #ef4444;'
+        : 'padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#f1f5f9;color:#94a3b8;border:2px solid #e2e8f0;';
+    document.getElementById('btnF').style.cssText = unit === 'F'
+        ? 'padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#fee2e2;color:#ef4444;border:2px solid #ef4444;'
+        : 'padding:0.35rem 1rem;border-radius:0.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;background:#f1f5f9;color:#94a3b8;border:2px solid #e2e8f0;';
+    document.getElementById('tempResult').style.display = 'none';
+    document.getElementById('tempInput').placeholder = unit === 'C' ? '36.5' : '97.7';
+}
+
+function calcTemp() {
+    const raw = parseFloat(document.getElementById('tempInput').value);
+    if (isNaN(raw)) { showToast('Error', 'Please enter a temperature value.', 'error'); return; }
+
+    // Normalize to Celsius
+    const tempC = tempUnit === 'F' ? (raw - 32) * 5 / 9 : raw;
+
+    let status, color, advice, fillPct;
+    if (tempC < 35)       { status = '🥶 Hypothermia'; color = '#3b82f6'; advice = 'Dangerously low! Seek immediate medical attention.'; fillPct = 5; }
+    else if (tempC < 36.1){ status = '❄️ Below Normal'; color = '#60a5fa'; advice = 'Slightly low. Stay warm and rest.'; fillPct = 20; }
+    else if (tempC <= 37.2){ status = '✅ Normal'; color = '#10b981'; advice = 'Your temperature is within the healthy range.'; fillPct = 45; }
+    else if (tempC <= 38) { status = '🌡️ Low-Grade Fever'; color = '#f59e0b'; advice = 'Rest, drink fluids, and monitor closely.'; fillPct = 65; }
+    else if (tempC <= 39) { status = '🔥 Fever'; color = '#f97316'; advice = 'Visit the school clinic. Take fever medicine if needed.'; fillPct = 78; }
+    else if (tempC <= 40) { status = '🔥 High Fever'; color = '#ef4444'; advice = 'Seek immediate medical attention.'; fillPct = 88; }
+    else                  { status = '🚨 Hyperpyrexia'; color = '#7f1d1d'; advice = 'Emergency! Go to a hospital immediately.'; fillPct = 98; }
+
+    document.getElementById('thermFill').style.height = `${fillPct}%`;
+    document.getElementById('thermFill').style.background = color;
+    document.getElementById('thermBulb').style.background = color;
+
+    const result = document.getElementById('tempResult');
+    result.style.display = 'block';
+    result.style.borderColor = color;
+    result.style.background = color + '11';
+    document.getElementById('tempStatus').textContent = status;
+    document.getElementById('tempStatus').style.color = color;
+    document.getElementById('tempAdvice').textContent = advice;
+}
+
+// Initialize GWA with 3 default rows
+(function initGwa() {
+    for (let i = 0; i < 3; i++) addGwaRow();
+})();
+
+</script>
+</body>
+</html>

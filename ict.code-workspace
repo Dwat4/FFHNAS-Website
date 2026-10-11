@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../ict"
+		},
+		{
+			"path": "D:/xampp/htdocs"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "ict"
+	}
+}

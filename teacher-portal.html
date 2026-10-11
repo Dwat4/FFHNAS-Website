@@ -1,0 +1,2962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Portal - FFHNAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --secondary: #34d399;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --text: #475569;
+            --text-light: #94a3b8;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--text); }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to   { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; }
+
+        /* HEADER */
+        .portal-header { background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .portal-header-content { max-width: 1600px; margin: 0 auto; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .portal-brand { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .portal-brand-icon { width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+        .portal-brand h1 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+        .portal-brand p  { font-size: 0.8rem; color: var(--text-light); margin: 0; }
+        .portal-actions  { display: flex; align-items: center; gap: 1rem; }
+        .portal-btn-icon { position: relative; width: 40px; height: 40px; border-radius: 0.5rem; background: var(--light); display: flex; align-items: center; justify-content: center; transition: all 0.2s; color: var(--text); border: 1px solid var(--border); cursor: pointer; }
+        .portal-btn-icon:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .notification-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 50px; }
+        .portal-user { display: flex; align-items: center; gap: 0.75rem; }
+        .portal-avatar { width: 40px; height: 40px; border-radius: 0.5rem; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+        .portal-user-name { font-weight: 700; color: var(--dark); margin: 0; font-size: 0.9rem; }
+        .portal-user-role { font-size: 0.78rem; color: var(--text-light); margin: 0; }
+        .portal-btn-logout { padding: 0.5rem 1rem; background: var(--light); border-radius: 0.5rem; border: 1px solid var(--border); font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; cursor: pointer; font-family: inherit; font-size: 0.875rem; }
+        .portal-btn-logout:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* LAYOUT */
+        .portal-container { display: grid; grid-template-columns: 280px 1fr; max-width: 1600px; margin: 0 auto; min-height: calc(100vh - 73px); }
+
+        /* SIDEBAR */
+        .portal-sidebar { background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 73px; height: calc(100vh - 73px); overflow-y: auto; }
+        .portal-nav { padding: 1.5rem 1rem; flex: 1; }
+        .nav-section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); padding: 0.5rem 0.75rem; margin-top: 0.75rem; }
+        .portal-nav-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; border-radius: 0.5rem; color: var(--text); font-weight: 500; font-size: 0.9rem; transition: all 0.2s; margin-bottom: 0.25rem; cursor: pointer; user-select: none; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
+        .portal-nav-link:hover  { background: var(--light); color: var(--primary); }
+        .portal-nav-link.active { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.08)); color: var(--primary); font-weight: 600; }
+        .portal-nav-link svg    { flex-shrink: 0; opacity: 0.7; }
+        .portal-nav-link.active svg { opacity: 1; }
+        .nav-badge { margin-left: auto; background: var(--danger); color: white; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 50px; min-width: 18px; text-align: center; }
+        .portal-sidebar-footer { padding: 1rem; border-top: 1px solid var(--border); }
+        .portal-btn-back { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.625rem; border: 1px solid var(--border); border-radius: 0.5rem; color: var(--text); font-weight: 600; font-size: 0.875rem; transition: all 0.2s; text-decoration: none; }
+        .portal-btn-back:hover { border-color: var(--primary); color: var(--primary); background: var(--light); }
+
+        /* MAIN */
+        .portal-main { padding: 2rem; background: var(--light); overflow-y: auto; height: calc(100vh - 73px); }
+        .portal-section { display: none; animation: fadeUp 0.3s ease; }
+        .portal-section.active { display: block; }
+        .section-title { font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-bottom: 0.25rem; }
+        .section-subtitle { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1.5rem; }
+
+        /* STAT CARDS */
+        .portal-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+        .portal-stat-card { background: white; padding: 1.5rem; border-radius: 1rem; display: flex; align-items: center; gap: 1.25rem; border: 1px solid var(--border); transition: box-shadow 0.2s; }
+        .portal-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .portal-stat-icon { width: 54px; height: 54px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .portal-stat-card.blue   .portal-stat-icon { background: rgba(16,185,129,0.1); color: var(--primary); }
+        .portal-stat-card.green  .portal-stat-icon { background: rgba(52,211,153,0.1); color: var(--secondary); }
+        .portal-stat-card.orange .portal-stat-icon { background: rgba(249,115,22,0.1); color: #f97316; }
+        .portal-stat-card.purple .portal-stat-icon { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+        .portal-stat-card.amber  .portal-stat-icon { background: rgba(245,158,11,0.1); color: var(--accent); }
+        .portal-stat-card.red    .portal-stat-icon { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .portal-stat-content h3  { font-size: 0.78rem; color: var(--text-light); font-weight: 700; margin: 0 0 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .portal-stat-value { font-size: 2rem; font-weight: 800; color: var(--dark); margin: 0 0 0.2rem; line-height: 1; }
+        .portal-stat-label { font-size: 0.82rem; color: var(--text-light); }
+
+        /* CARD */
+        .portal-card { background: white; border-radius: 1rem; border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.75rem; }
+        .portal-card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .portal-card-header h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin: 0; }
+        .portal-card-body { padding: 1.5rem; }
+        .portal-link { color: var(--primary); font-weight: 600; font-size: 0.875rem; cursor: pointer; background: none; border: none; font-family: inherit; }
+        .portal-link:hover { text-decoration: underline; }
+
+        /* TWO COL */
+        .portal-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.75rem; }
+
+        /* DASHBOARD CLASSES */
+        .portal-classes-list { padding: 1rem; }
+        .portal-class-item { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--border); transition: all 0.2s; }
+        .portal-class-item:hover { background: var(--light); }
+        .portal-class-item.current { background: rgba(16,185,129,0.05); border-color: var(--primary); }
+        .class-time { font-size: 0.82rem; font-weight: 700; color: var(--text); min-width: 80px; }
+        .class-info { flex: 1; }
+        .class-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--dark); margin: 0 0 0.2rem; }
+        .class-info p  { font-size: 0.82rem; color: var(--text-light); margin: 0; }
+        .class-status { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px; background: var(--light); color: var(--text-light); }
+        .portal-class-item.current .class-status { background: var(--primary); color: white; }
+
+        /* DASHBOARD TASKS */
+        .portal-tasks-list { padding: 1rem; }
+        .portal-task-item { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid var(--border); transition: all 0.2s; }
+        .portal-task-item:hover { background: var(--light); }
+        .portal-task-item.urgent { border-left-color: var(--danger); background: rgba(239,68,68,0.04); }
+        .task-icon { width: 38px; height: 38px; border-radius: 0.5rem; background: var(--light); display: flex; align-items: center; justify-content: center; color: var(--text); flex-shrink: 0; }
+        .task-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--dark); margin: 0 0 0.2rem; }
+        .task-info p  { font-size: 0.82rem; color: var(--text-light); margin: 0; }
+
+        /* CLASSES PAGE */
+        .classes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .class-card { background: white; border-radius: 1rem; border: 1px solid var(--border); overflow: hidden; transition: all 0.2s; }
+        .class-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .class-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid transparent; }
+        .class-header.chemistry { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); border-bottom-color: var(--primary); }
+        .class-header.organic   { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05)); border-bottom-color: #f59e0b; }
+        .class-header.shelly    { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.05)); border-bottom-color: #3b82f6; }
+        .class-header.spen      { background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(139,92,246,0.05)); border-bottom-color: #8b5cf6; }
+        .class-header h3 { font-size: 1rem; font-weight: 800; color: var(--dark); margin: 0; }
+        .class-badge { background: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; color: var(--primary); border: 1px solid var(--primary); }
+        .class-body { padding: 1.25rem 1.5rem; }
+        .class-body p { color: var(--text); margin-bottom: 0.75rem; font-size: 0.9rem; line-height: 1.5; }
+        .class-stats { display: flex; gap: 1rem; font-size: 0.82rem; color: var(--text-light); flex-wrap: wrap; }
+        .class-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
+        .btn-class-action { flex: 1; padding: 0.625rem; background: var(--primary); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.875rem; font-family: inherit; }
+        .btn-class-action:hover { background: #059669; }
+        .btn-class-secondary { flex: 1; padding: 0.625rem; background: white; color: var(--primary); border: 1px solid var(--primary); border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.875rem; font-family: inherit; }
+        .btn-class-secondary:hover { background: rgba(16,185,129,0.05); }
+
+        /* TABLES */
+        .table-responsive { overflow-x: auto; padding: 1.5rem; }
+        .portal-table { width: 100%; border-collapse: collapse; }
+        .portal-table th { padding: 0.75rem 1rem; text-align: left; font-size: 0.78rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; background: var(--light); border-bottom: 2px solid var(--border); white-space: nowrap; }
+        .portal-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .portal-table tr:last-child td { border-bottom: none; }
+        .portal-table tr:hover td { background: rgba(248,250,252,0.8); }
+
+        .grade-input { width: 72px; padding: 0.4rem 0.5rem; border: 1px solid var(--border); border-radius: 0.375rem; text-align: center; font-weight: 600; font-family: inherit; font-size: 0.875rem; }
+        .grade-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+
+        .btn-sm { padding: 0.375rem 0.75rem; border: none; border-radius: 0.375rem; font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; font-family: inherit; }
+        .btn-save   { background: var(--primary); color: white; }
+        .btn-save:hover { background: #059669; }
+        .btn-export { background: white; color: var(--primary); border: 1px solid var(--primary); display: flex; align-items: center; gap: 0.375rem; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 0.875rem; transition: all 0.2s; font-family: inherit; }
+        .btn-export:hover { background: var(--primary); color: white; }
+        .btn-submit-all { background: var(--primary); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; padding: 0.625rem 1.5rem; font-size: 0.875rem; transition: all 0.2s; font-family: inherit; }
+        .btn-submit-all:hover { background: #059669; }
+
+        .class-selector { padding: 0.4rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-weight: 600; background: white; cursor: pointer; font-family: inherit; font-size: 0.875rem; }
+
+        .grades-actions { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 1rem; justify-content: flex-end; align-items: center; }
+
+        /* GRADE BADGE */
+        .grade-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.82rem; font-weight: 700; }
+        .grade-badge.excellent { background: rgba(16,185,129,0.1); color: var(--primary); }
+        .grade-badge.good      { background: rgba(59,130,246,0.1); color: var(--info); }
+        .grade-badge.average   { background: rgba(245,158,11,0.1); color: var(--accent); }
+        .grade-badge.low       { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+        /* ATTENDANCE */
+        .attendance-tracking { padding: 0; }
+        .attendance-student { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--border); transition: background 0.2s; }
+        .attendance-student:hover { background: var(--light); }
+        .student-info { display: flex; flex-direction: column; gap: 0.2rem; }
+        .student-name { font-weight: 700; color: var(--dark); font-size: 0.9rem; }
+        .student-id   { font-size: 0.78rem; color: var(--text-light); }
+        .attendance-buttons { display: flex; gap: 0.5rem; }
+        .btn-attendance { padding: 0.4rem 0.875rem; border: 2px solid; border-radius: 0.375rem; font-weight: 600; cursor: pointer; transition: all 0.2s; background: white; font-size: 0.8rem; font-family: inherit; }
+        .btn-attendance.present { border-color: var(--primary); color: var(--primary); }
+        .btn-attendance.present:hover, .btn-attendance.present.selected { background: var(--primary); color: white; }
+        .btn-attendance.absent  { border-color: var(--danger); color: var(--danger); }
+        .btn-attendance.absent:hover, .btn-attendance.absent.selected { background: var(--danger); color: white; }
+        .btn-attendance.late    { border-color: #f59e0b; color: #f59e0b; }
+        .btn-attendance.late:hover, .btn-attendance.late.selected { background: #f59e0b; color: white; }
+        .attendance-actions { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; align-items: center; }
+        .attendance-summary-bar { display: flex; gap: 1rem; padding: 0.75rem 1.5rem; background: var(--light); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .att-chip { display: flex; align-items: center; gap: 0.375rem; font-size: 0.82rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 50px; }
+        .att-chip.present { background: rgba(16,185,129,0.1); color: var(--primary); }
+        .att-chip.absent  { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .att-chip.late    { background: rgba(245,158,11,0.1); color: var(--accent); }
+
+        /* ASSIGNMENTS */
+        .assign-card { background: white; border-radius: 1rem; border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.75rem; }
+        .assign-card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); }
+        .assign-card-header h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin: 0; }
+        .assign-form-wrapper { padding: 1.5rem; }
+        .assign-field { margin-bottom: 1.125rem; }
+        .assign-field label { display: block; font-weight: 600; color: var(--dark); margin-bottom: 0.375rem; font-size: 0.875rem; }
+        .assign-input, .assign-textarea, .assign-select {
+            width: 100%; padding: 0.625rem 0.875rem; border: 1px solid var(--border);
+            border-radius: 0.5rem; font-size: 0.9rem; font-family: 'Inter', sans-serif;
+            transition: all 0.2s; background: white; color: var(--dark);
+        }
+        .assign-input:focus, .assign-textarea:focus, .assign-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+        .assign-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+        .assign-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .assign-create-btn {
+            width: 100%; padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; border-radius: 0.625rem;
+            font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            margin-top: 0.75rem; box-shadow: 0 4px 12px rgba(16,185,129,0.25); font-family: inherit;
+        }
+        .assign-create-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16,185,129,0.35); }
+
+        /* ASSIGNMENT LIST ITEMS */
+        .assignment-item { display: flex; gap: 1rem; padding: 1.25rem 1.5rem; background: white; border-radius: 0.75rem; border: 1px solid var(--border); margin-bottom: 0.75rem; transition: all 0.2s; }
+        .assignment-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); border-color: rgba(16,185,129,0.3); }
+        .assignment-icon { width: 44px; height: 44px; background: rgba(16,185,129,0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0; }
+        .assignment-details { flex: 1; min-width: 0; }
+        .assignment-details h4 { margin-bottom: 0.375rem; font-weight: 700; color: var(--dark); font-size: 0.95rem; }
+        .assignment-meta { display: flex; gap: 0.75rem; font-size: 0.82rem; color: var(--text-light); flex-wrap: wrap; align-items: center; }
+        .assignment-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
+        .btn-assignment-action { padding: 0.375rem 0.75rem; background: rgba(16,185,129,0.1); color: var(--primary); border: 1px solid rgba(16,185,129,0.2); border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.8rem; font-family: inherit; transition: all 0.2s; }
+        .btn-assignment-action:hover { background: var(--primary); color: white; }
+        .btn-assignment-delete { padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.8rem; font-family: inherit; transition: all 0.2s; }
+        .btn-assignment-delete:hover { background: var(--danger); color: white; }
+
+        /* ANNOUNCEMENTS */
+        .announcements-form-wrapper { padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .announcements-list { padding: 1rem; }
+        .announcement-item { padding: 1.25rem; background: rgba(16,185,129,0.03); border-left: 4px solid var(--primary); border-radius: 0.5rem; margin-bottom: 0.75rem; transition: all 0.2s; }
+        .announcement-item:hover { background: rgba(16,185,129,0.06); }
+        .announcement-item.urgent { background: rgba(239,68,68,0.03); border-left-color: var(--danger); }
+        .announcement-item.urgent:hover { background: rgba(239,68,68,0.06); }
+        .announcement-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 0.75rem; }
+        .announcement-title { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin: 0; }
+        .announcement-badge { padding: 0.2rem 0.625rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; background: rgba(16,185,129,0.1); color: var(--primary); white-space: nowrap; }
+        .announcement-badge.urgent { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .announcement-content { color: var(--text); line-height: 1.6; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .announcement-footer { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-light); }
+        .ann-delete-btn { padding: 0.25rem 0.625rem; background: rgba(239,68,68,0.1); color: var(--danger); border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; font-weight: 600; font-family: inherit; transition: all 0.2s; }
+        .ann-delete-btn:hover { background: var(--danger); color: white; }
+
+        /* SCHEDULE */
+        .schedule-table-wrap { overflow-x: auto; padding: 1.5rem; }
+        .schedule-tbl { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .schedule-tbl th { padding: 0.75rem 1rem; background: var(--light); font-weight: 700; color: var(--dark); font-size: 0.82rem; border: 1px solid var(--border); text-align: center; }
+        .schedule-tbl td { padding: 0; border: 1px solid var(--border); text-align: center; vertical-align: middle; }
+        .class-cell { font-weight: 700; padding: 0.875rem !important; line-height: 1.5; font-size: 0.875rem; }
+        .class-cell small { display: block; font-weight: 500; margin-top: 0.2rem; opacity: 0.8; font-size: 0.78rem; }
+        .class-cell.chemistry { background: rgba(16,185,129,0.1); color: var(--primary); }
+        .class-cell.organic   { background: rgba(245,158,11,0.1); color: #d97706; }
+        .class-cell.shelly    { background: rgba(59,130,246,0.1); color: #2563eb; }
+        .class-cell.spen      { background: rgba(139,92,246,0.1); color: #7c3aed; }
+        .break-cell { background: var(--light); color: var(--text-light); font-style: italic; font-size: 0.82rem; padding: 0.625rem !important; }
+
+        /* CALENDAR */
+        .calendar-nav { display: flex; align-items: center; gap: 0.75rem; }
+        .calendar-nav-btn { width: 32px; height: 32px; border-radius: 0.5rem; border: 1px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; color: var(--text); }
+        .calendar-nav-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+        .calendar-current-month { font-size: 0.95rem; font-weight: 700; color: var(--dark); min-width: 140px; text-align: center; }
+        .calendar-grid { padding: 1.25rem; }
+        .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+        .calendar-weekday { text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; padding: 0.375rem; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; color: var(--dark); position: relative; cursor: pointer; transition: all 0.15s; }
+        .calendar-day:hover { background: var(--light); }
+        .calendar-day.other-month { color: var(--border); }
+        .calendar-day.current { background: var(--primary); color: white; font-weight: 800; }
+        .event-dot { position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; }
+        .event-dot.holiday { background: var(--danger); }
+        .event-dot.exam    { background: #f59e0b; }
+        .event-dot.meeting { background: #8b5cf6; }
+        .event-dot.event   { background: var(--primary); }
+        .calendar-legend { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 1.25rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--text); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .legend-dot.today   { background: var(--primary); }
+        .legend-dot.holiday { background: var(--danger); }
+        .legend-dot.exam    { background: #f59e0b; }
+        .legend-dot.meeting { background: #8b5cf6; }
+        .legend-dot.event   { background: var(--info); }
+
+        /* EVENTS */
+        .events-list { padding: 1rem; }
+        .event-item { display: flex; align-items: center; gap: 1rem; padding: 0.875rem 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid var(--border); transition: all 0.2s; }
+        .event-item:hover { background: var(--light); }
+        .event-item.holiday-event { border-left-color: var(--danger); background: rgba(239,68,68,0.03); }
+        .event-item.exam-event    { border-left-color: #f59e0b; background: rgba(245,158,11,0.03); }
+        .event-item.meeting-event { border-left-color: #8b5cf6; background: rgba(139,92,246,0.03); }
+        .event-item.school-event  { border-left-color: var(--primary); background: rgba(16,185,129,0.03); }
+        .event-date { text-align: center; flex-shrink: 0; }
+        .event-day   { display: block; font-size: 1.4rem; font-weight: 800; color: var(--dark); line-height: 1; }
+        .event-month { display: block; font-size: 0.7rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
+        .event-info { flex: 1; }
+        .event-info h4 { font-size: 0.875rem; font-weight: 700; color: var(--dark); margin: 0 0 0.2rem; }
+        .event-info p  { font-size: 0.8rem; color: var(--text-light); margin: 0; }
+        .event-type { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 50px; }
+        .event-type.holiday { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .event-type.exam    { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .event-type.meeting { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+        .event-type.event   { background: rgba(16,185,129,0.1); color: var(--primary); }
+
+        /* PROFILE */
+        .profile-banner { background: linear-gradient(135deg, #d97706, #f59e0b); border-radius: 1rem; padding: 2rem; color: white; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .profile-avatar-xl { width: 80px; height: 80px; border-radius: 0.75rem; background: rgba(255,255,255,0.25); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.75rem; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.4); }
+        .profile-banner h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem; }
+        .profile-banner p  { opacity: 0.85; font-size: 0.875rem; }
+        .profile-chips { display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap; }
+        .profile-chip  { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+        .info-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .info-item-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 0.2rem; }
+        .info-item-value { font-size: 0.9rem; font-weight: 600; color: var(--dark); }
+
+        /* PROGRESS */
+        .progress-item  { margin-bottom: 0.875rem; }
+        .progress-label { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+        .progress-name  { font-size: 0.875rem; font-weight: 600; color: var(--dark); }
+        .progress-val   { font-size: 0.875rem; font-weight: 700; color: var(--primary); }
+        .progress-bar   { height: 8px; background: var(--border); border-radius: 50px; overflow: hidden; }
+        .progress-fill  { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-light); }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* STATUS CHIPS */
+        .chip { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+        .chip.green  { background: rgba(16,185,129,0.1); color: var(--primary); }
+        .chip.amber  { background: rgba(245,158,11,0.1); color: #d97706; }
+        .chip.red    { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .chip.blue   { background: rgba(59,130,246,0.1); color: var(--info); }
+        .chip.purple { background: rgba(139,92,246,0.1); color: #7c3aed; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .portal-container { grid-template-columns: 1fr; }
+            .portal-sidebar  { display: none; }
+            .portal-grid-2   { grid-template-columns: 1fr; }
+            .assign-row      { grid-template-columns: 1fr; }
+            .info-grid       { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .portal-header-content { padding: 0.75rem 1rem; }
+            .portal-main { padding: 1rem; }
+            .portal-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .classes-grid { grid-template-columns: 1fr; }
+            .portal-user-name, .portal-user-role { display: none; }
+        }
+
+        /* ========== TEACHER PORTAL MOBILE IMPROVEMENTS ========== */
+
+/* Mobile menu toggle button */
+.mobile-menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.5rem;
+    background: var(--light);
+    border: 1px solid var(--border);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+    /* Show hamburger */
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    /* Sidebar becomes a slide-in drawer */
+    .portal-sidebar {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 280px;
+        height: 100vh;
+        z-index: 300;
+        transition: left 0.3s ease;
+        box-shadow: none;
+    }
+
+    .portal-sidebar.open {
+        left: 0;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+
+    /* Overlay behind sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 299;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .portal-main {
+        height: auto;
+        overflow-y: visible;
+    }
+
+    .portal-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .assign-row {
+        grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Header */
+    .portal-header-content {
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .portal-brand h1 {
+        font-size: 0.95rem;
+    }
+
+    .portal-brand p {
+        display: none;
+    }
+
+    .portal-actions {
+        gap: 0.5rem;
+    }
+
+    .portal-btn-logout span {
+        display: none;
+    }
+
+    .portal-btn-logout {
+        padding: 0.5rem;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+    }
+
+    /* Main */
+    .portal-main {
+        padding: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+
+    /* Stats */
+    .portal-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .portal-stat-card {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .portal-stat-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .portal-stat-value {
+        font-size: 1.5rem;
+    }
+
+    /* Cards */
+    .portal-card-header {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .portal-card-body {
+        padding: 1rem;
+    }
+
+    /* Classes */
+    .classes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .class-footer {
+        padding: 0.875rem 1rem;
+    }
+
+    /* Dashboard class list */
+    .portal-classes-list {
+        padding: 0.5rem;
+    }
+
+    .portal-class-item {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .class-time {
+        min-width: auto;
+    }
+
+    /* Attendance */
+    .attendance-student {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .attendance-buttons {
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+
+    .btn-attendance {
+        padding: 0.35rem 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .attendance-actions {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .attendance-actions .btn-export,
+    .attendance-actions .btn-submit-all {
+        flex: 1;
+        justify-content: center;
+    }
+
+    /* Grades */
+    .grades-actions {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .grades-actions .btn-export,
+    .grades-actions .btn-submit-all {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .grade-input {
+        width: 56px;
+        font-size: 0.8rem;
+    }
+
+    /* Assignments */
+    .assign-form-wrapper {
+        padding: 1rem;
+    }
+
+    .assignment-item {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .assignment-actions {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    /* Profile */
+    .profile-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+
+    .profile-chips {
+        justify-content: center;
+    }
+
+    /* Calendar */
+    .portal-grid-2 .portal-card {
+        margin-bottom: 0;
+    }
+
+    /* Card header with date picker & selector for attendance */
+    .portal-card-header > div {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    #attendanceDate,
+    .class-selector {
+        font-size: 0.82rem;
+        padding: 0.35rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .portal-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-brand-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .portal-brand h1 {
+        font-size: 0.875rem;
+    }
+
+    .portal-stat-card {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .calendar-current-month {
+        min-width: 110px;
+        font-size: 0.85rem;
+    }
+
+    .table-responsive {
+        padding: 0.75rem;
+    }
+
+    .assign-create-btn {
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<header class="portal-header">
+    <div class="portal-header-content">
+        <div class="portal-brand">
+            <div class="portal-brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </div>
+            <div>
+                <h1>FFHNAS Teacher Portal</h1>
+                <p>Faculty Management System</p>
+            </div>
+        </div>
+        <div class="portal-actions">
+            <!-- Add inside .portal-actions, as first child: -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+            <button class="portal-btn-icon" onclick="toggleNotifications()" title="Notifications">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span class="notification-badge" id="notifBadge">3</span>
+            </button>
+            <div class="portal-user">
+                <div class="portal-avatar" id="headerAvatar">?</div>
+<div>
+    <p class="portal-user-name" id="headerName">Loading...</p>
+    <p class="portal-user-role" id="headerRole">Teacher</p>
+</div>
+            </div>
+            <button class="portal-btn-logout" onclick="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="portal-container">
+
+    <aside class="portal-sidebar">
+        <nav class="portal-nav">
+            <div class="nav-section-title">Main</div>
+            <button class="portal-nav-link active" data-section="dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                Dashboard
+            </button>
+            <button class="portal-nav-link" data-section="announcements">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Announcements
+                <span class="nav-badge" id="announcementsBadge">0</span>
+            </button>
+
+            <div class="nav-section-title">Teaching</div>
+            <button class="portal-nav-link" data-section="classes">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                My Classes
+            </button>
+            <button class="portal-nav-link" data-section="grades">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Grade Management
+            </button>
+            <button class="portal-nav-link" data-section="attendance">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                Attendance
+            </button>
+            <button class="portal-nav-link" data-section="assignments">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+                Assignments
+                <span class="nav-badge" id="assignmentsBadge">0</span>
+            </button>
+
+             <button class="portal-nav-link" data-section="section-schedule-mgmt">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Section Schedule
+            </button>
+            <button class="portal-nav-link" data-section="my-section">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    My Section
+</button>
+
+            <div class="nav-section-title">More</div>
+            <button class="portal-nav-link" data-section="schedule">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                My Schedule
+            </button>
+            <button class="portal-nav-link" data-section="calendar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="3" x2="21" y1="10" y2="10"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/></svg>
+                Calendar & Events
+            </button>
+            <button class="portal-nav-link" data-section="profile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+            </button>
+            <button class="portal-nav-link" data-section="settings">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+</button>
+        </nav>
+        
+        <div class="portal-sidebar-footer">
+            <a href="index.html" class="portal-btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                Back to School Website
+            </a>
+        </div>
+    </aside>
+
+    <main class="portal-main">
+
+        <!-- DASHBOARD -->
+        <div class="portal-section active" id="section-dashboard">
+            <h2 class="section-title" id="dashGreeting">Good Morning, Mrs. Santos! ðŸ‘‹</h2>
+            <p class="section-subtitle" id="dashDate">Friday, March 6, 2026 Â· SY 2026-2027, 2nd Semester</p>
+
+            <div class="portal-stats-grid">
+                <div class="portal-stat-card blue">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <div><h3>Total Students</h3><p class="portal-stat-value">42</p><p class="portal-stat-label">Across 3 sections</p></div>
+                </div>
+                <div class="portal-stat-card green">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+                    <div><h3>My Classes</h3><p class="portal-stat-value">4</p><p class="portal-stat-label">Active this semester</p></div>
+                </div>
+                <div class="portal-stat-card orange">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <div><h3>Assignments</h3><p class="portal-stat-value" id="dashAssignmentCount">0</p><p class="portal-stat-label">Posted this semester</p></div>
+                </div>
+                <div class="portal-stat-card amber">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div>
+                    <div><h3>Class Average</h3><p class="portal-stat-value">88.4</p><p class="portal-stat-label">All sections combined</p></div>
+                </div>
+            </div>
+
+            <div class="portal-grid-2">
+                <div class="portal-card">
+                    <div class="portal-card-header">
+                        <h3>Today's Classes</h3>
+                        <span id="dashDateShort" style="font-size:0.875rem;color:var(--text-light);font-weight:600;"></span>
+                    </div>
+                    <div class="portal-classes-list">
+                        <div class="portal-class-item current">
+                            <span class="class-time">7:00 AM</span>
+                            <div class="class-info"><h4>General Chemistry 1</h4><p>Grade 11 - STEM A Â· Room 201</p></div>
+                            <span class="class-status">Now</span>
+                        </div>
+                        <div class="portal-class-item">
+                            <span class="class-time">9:00 AM</span>
+                            <div class="class-info"><h4>General Chemistry 1</h4><p>Grade 11 - STEM B Â· Room 201</p></div>
+                            <span class="class-status">Next</span>
+                        </div>
+                        <div class="portal-class-item">
+                            <span class="class-time">11:00 AM</span>
+                            <div class="class-info"><h4>Organic Chemistry</h4><p>Grade 12 - STEM B Â· Lab 1</p></div>
+                            <span class="class-status">Upcoming</span>
+                        </div>
+                        <div class="portal-class-item">
+                            <span class="class-time">1:30 PM</span>
+                            <div class="class-info"><h4>STEM Elective</h4><p>Grade 12 - STEM A Â· Room 301</p></div>
+                            <span class="class-status">Upcoming</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portal-card">
+                    <div class="portal-card-header">
+                        <h3>Announcements</h3>
+                        <button class="portal-link" onclick="switchSection('announcements')">View All</button>
+                    </div>
+                    <div class="announcements-list" id="dashboardAnnouncements">
+                        <div class="empty-state"><p>No announcements yet</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portal-grid-2">
+                <div class="portal-card">
+                    <div class="portal-card-header"><h3>Pending Tasks</h3></div>
+                    <div class="portal-tasks-list">
+                        <div class="portal-task-item urgent">
+                            <div class="task-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></div>
+                            <div class="task-info"><h4>Submit Q3 Grades</h4><p>Due: March 8, 2026 Â· URGENT</p></div>
+                        </div>
+                        <div class="portal-task-item">
+                            <div class="task-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div>
+                            <div class="task-info"><h4>Prepare Final Exam Questions</h4><p>Due: March 15, 2026</p></div>
+                        </div>
+                        <div class="portal-task-item">
+                            <div class="task-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                            <div class="task-info"><h4>Update Attendance Records</h4><p>March 2026 attendance pending</p></div>
+                        </div>
+                        <div class="portal-task-item">
+                            <div class="task-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="3" x2="21" y1="10" y2="10"/></svg></div>
+                            <div class="task-info"><h4>Faculty Meeting</h4><p>March 15 Â· 3:00 PM Â· Conference Room</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portal-card">
+                    <div class="portal-card-header"><h3>Class Performance Overview</h3></div>
+                    <div class="portal-card-body">
+                        <div class="progress-item">
+                            <div class="progress-label"><span class="progress-name">11-STEM A (GC1)</span><span class="progress-val">90.0</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label"><span class="progress-name">11-STEM B (GC1)</span><span class="progress-val">87.5</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:87.5%"></div></div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label"><span class="progress-name">12-STEM B (Organic)</span><span class="progress-val">91.3</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:91.3%"></div></div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label"><span class="progress-name">12-STEM A (SPEN)</span><span class="progress-val">84.8</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:84.8%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="portal-section" id="section-announcements">
+            <h2 class="section-title">Announcements</h2>
+            <p class="section-subtitle">School announcements from the administration</p>
+
+            <div style="display:flex;align-items:center;gap:0.875rem;padding:1rem 1.25rem;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:0.75rem;margin-bottom:1.5rem;">
+                <div style="width:36px;height:36px;background:rgba(59,130,246,0.1);border-radius:0.5rem;display:flex;align-items:center;justify-content:center;color:#3b82f6;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                </div>
+                <p style="font-size:0.875rem;color:#1e40af;font-weight:500;margin:0;">Announcements are managed by the school administrator. Contact the admin to post or remove announcements.</p>
+            </div>
+
+            <div class="portal-card">
+                <div class="portal-card-header">
+                    <h3>All Announcements</h3>
+                    <span id="announcementCount" style="font-size:0.875rem;color:var(--text-light);font-weight:600;">0 announcements</span>
+                </div>
+                <div class="announcements-list" id="announcementsList">
+                    <div class="empty-state"><p>No announcements yet.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLASSES -->
+        <div class="portal-section" id="section-classes">
+            <h2 class="section-title">My Classes</h2>
+            <p class="section-subtitle">SY 2026-2027 Â· 2nd Semester</p>
+            <div class="classes-grid">
+                <div class="class-card">
+                    <div class="class-header chemistry">
+                        <div><h3>General Chemistry 1</h3><p style="font-size:0.82rem;color:var(--text-light);margin-top:0.25rem;">GC1-11A Â· Room 201</p></div>
+                        <span class="class-badge">STEM 11-A</span>
+                    </div>
+                    <div class="class-body">
+                        <p>Introduction to atomic structure, chemical bonding, reactions, and stoichiometry for Grade 11 STEM students.</p>
+                        <div class="class-stats">
+                            <span>ðŸ‘¥ 5 students</span>
+                            <span>ðŸ“Š Avg: 90.0</span>
+                            <span>ðŸ• MWF 7:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="class-footer">
+                        <button class="btn-class-action" onclick="switchSection('grades');loadGradesForSection('gc1-11a');document.getElementById('gradesClassSelector').value='gc1-11a'">View Grades</button>
+                        <button class="btn-class-secondary" onclick="switchSection('attendance');changeAttendanceSection('gc1-11a');document.getElementById('attendanceClassSelector').value='gc1-11a'">Attendance</button>
+                    </div>
+                </div>
+
+                <div class="class-card">
+                    <div class="class-header shelly">
+                        <div><h3>General Chemistry 1</h3><p style="font-size:0.82rem;color:var(--text-light);margin-top:0.25rem;">GC1-11B Â· Room 201</p></div>
+                        <span class="class-badge" style="color:#2563eb;border-color:#2563eb;">STEM 11-B</span>
+                    </div>
+                    <div class="class-body">
+                        <p>Introduction to atomic structure, chemical bonding, reactions, and stoichiometry for Grade 11 STEM Section B.</p>
+                        <div class="class-stats">
+                            <span>ðŸ‘¥ 4 students</span>
+                            <span>ðŸ“Š Avg: 87.5</span>
+                            <span>ðŸ• TTh 9:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="class-footer">
+                        <button class="btn-class-action" onclick="switchSection('grades');loadGradesForSection('gc1-11b');document.getElementById('gradesClassSelector').value='gc1-11b'">View Grades</button>
+                        <button class="btn-class-secondary" onclick="switchSection('attendance');changeAttendanceSection('gc1-11b');document.getElementById('attendanceClassSelector').value='gc1-11b'">Attendance</button>
+                    </div>
+                </div>
+
+                <div class="class-card">
+                    <div class="class-header organic">
+                        <div><h3>Organic Chemistry</h3><p style="font-size:0.82rem;color:var(--text-light);margin-top:0.25rem;">OC-12B Â· Laboratory 1</p></div>
+                        <span class="class-badge" style="color:#d97706;border-color:#d97706;">STEM 12-B</span>
+                    </div>
+                    <div class="class-body">
+                        <p>Advanced study of carbon compounds, functional groups, reaction mechanisms, and organic synthesis for Grade 12.</p>
+                        <div class="class-stats">
+                            <span>ðŸ‘¥ 3 students</span>
+                            <span>ðŸ“Š Avg: 91.3</span>
+                            <span>ðŸ• MWF 11:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="class-footer">
+                        <button class="btn-class-action" onclick="switchSection('grades');loadGradesForSection('oc-12b');document.getElementById('gradesClassSelector').value='oc-12b'">View Grades</button>
+                        <button class="btn-class-secondary" onclick="switchSection('attendance');changeAttendanceSection('oc-12b');document.getElementById('attendanceClassSelector').value='oc-12b'">Attendance</button>
+                    </div>
+                </div>
+
+                <div class="class-card">
+                    <div class="class-header spen">
+                        <div><h3>STEM Elective (SPEN)</h3><p style="font-size:0.82rem;color:var(--text-light);margin-top:0.25rem;">SPEN-12A Â· Room 301</p></div>
+                        <span class="class-badge" style="color:#7c3aed;border-color:#7c3aed;">STEM 12-A</span>
+                    </div>
+                    <div class="class-body">
+                        <p>STEM elective covering applied science, practical experiments, and research project development for senior students.</p>
+                        <div class="class-stats">
+                            <span>ðŸ‘¥ 6 students</span>
+                            <span>ðŸ“Š Avg: 84.8</span>
+                            <span>ðŸ• TTh 1:30 PM</span>
+                        </div>
+                    </div>
+                    <div class="class-footer">
+                        <button class="btn-class-action" onclick="switchSection('grades');loadGradesForSection('spen-12a');document.getElementById('gradesClassSelector').value='spen-12a'">View Grades</button>
+                        <button class="btn-class-secondary" onclick="switchSection('attendance');changeAttendanceSection('spen-12a');document.getElementById('attendanceClassSelector').value='spen-12a'">Attendance</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRADES -->
+        <div class="portal-section" id="section-grades">
+            <h2 class="section-title">Grade Management</h2>
+            <p class="section-subtitle">View and edit student grades by section</p>
+
+            <div class="portal-stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="portal-stat-card green">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg></div>
+                    <div><h3>Section Average</h3><p class="portal-stat-value" id="sectionAvg">90.0</p><p class="portal-stat-label">Current section</p></div>
+                </div>
+                <div class="portal-stat-card blue">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                    <div><h3>Students</h3><p class="portal-stat-value" id="sectionStudentCount">5</p><p class="portal-stat-label">In this section</p></div>
+                </div>
+                <div class="portal-stat-card amber">
+                    <div class="portal-stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+                    <div><h3>Passing Rate</h3><p class="portal-stat-value" id="sectionPassRate">100%</p><p class="portal-stat-label">Above 75</p></div>
+                </div>
+            </div>
+
+            <div class="portal-card">
+                <div class="portal-card-header">
+                    <h3>Student Grades</h3>
+                    <select class="class-selector" id="gradesClassSelector" onchange="changeGradeSection(this.value)">
+                        <option value="gc1-11a">11-STEM A (GC1)</option>
+                        <option value="gc1-11b">11-STEM B (GC1)</option>
+                        <option value="oc-12b">12-STEM B (Organic)</option>
+                        <option value="spen-12a">12-STEM A (SPEN)</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="portal-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                               <th>Q1</th>
+<th>Q2</th>
+<th>Q3</th>
+<th>Q4</th>
+<th>Final Grade</th>
+<th>Remarks</th>
+<th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="grades-actions">
+                    <button class="btn-export" onclick="exportGrades()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                        Export Excel
+                    </button>
+                    <button class="btn-submit-all" onclick="submitAllGrades()">Submit All Grades</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE -->
+<div class="portal-section" id="section-attendance">
+    <h2 class="section-title">Attendance Tracking</h2>
+    <p class="section-subtitle">Mark and manage student attendance</p>
+
+    <div class="portal-card">
+        <div class="portal-card-header">
+            <h3>Mark Attendance</h3>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <input type="date" id="attendanceDate"
+                    style="padding:0.4rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;cursor:pointer;"
+                    onchange="loadAttendanceForSection(currentAttendanceSection)">
+                <select class="class-selector" id="attendanceClassSelector" onchange="changeAttendanceSection(this.value)">
+                    <option value="">No sections assigned</option>
+                </select>
+            </div>
+        </div>
+        <div class="attendance-summary-bar" id="attendanceSummaryBar">
+            <span class="att-chip present">✓ Present: <strong id="attPresentCount">0</strong></span>
+            <span class="att-chip absent">✗ Absent: <strong id="attAbsentCount">0</strong></span>
+            <span class="att-chip late">⏰ Late: <strong id="attLateCount">0</strong></span>
+        </div>
+        <div class="attendance-tracking" id="attendanceTrackingBody"></div>
+        <div class="attendance-actions">
+            <button class="btn-export" onclick="markAllPresent()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark All Present
+            </button>
+            <button class="btn-submit-all" onclick="submitAttendance()">Save Attendance</button>
+        </div>
+    </div>
+</div>
+
+        <!-- ASSIGNMENTS -->
+        <div class="portal-section" id="section-assignments">
+            <h2 class="section-title">Assignments</h2>
+            <p class="section-subtitle">Create and manage assignments for your classes</p>
+
+            <div class="assign-card">
+                <div class="assign-card-header"><h3>Create New Assignment</h3></div>
+                <div class="assign-form-wrapper">
+                    <div class="assign-row">
+                        <div class="assign-field">
+                            <label>Subject</label>
+                            <select class="assign-select" id="assignmentSubject">
+    <option value="">-- Select Subject --</option>
+</select>
+                        </div>
+                        <div class="assign-field">
+                            <label>Section</label>
+                            <select class="assign-select" id="assignmentSection">
+                                <option value="all">All Sections</option>
+                                <option value="gc1-11a">11-STEM A</option>
+                                <option value="gc1-11b">11-STEM B</option>
+                                <option value="oc-12b">12-STEM B</option>
+                                <option value="spen-12a">12-STEM A</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="assign-field">
+                        <label>Assignment Title</label>
+                        <input type="text" class="assign-input" id="assignmentTitle" placeholder="e.g. Problem Set 5 â€” Chemical Bonding">
+                    </div>
+                    <div class="assign-field">
+                        <label>Instructions / Description</label>
+                        <textarea class="assign-textarea" id="assignmentDescription" placeholder="Detailed instructions for students..."></textarea>
+                    </div>
+                    <div class="assign-row">
+                        <div class="assign-field">
+                            <label>Due Date</label>
+                            <input type="date" class="assign-input" id="assignmentDueDate">
+                        </div>
+                        <div class="assign-field">
+                            <label>Total Points</label>
+                            <input type="number" class="assign-input" id="assignmentPoints" value="100" min="1">
+                        </div>
+                    </div>
+                    <div class="assign-field">
+                        <label>Assignment Type</label>
+                        <select class="assign-select" id="assignmentType">
+                            <option value="homework">Homework</option>
+                            <option value="quiz">Quiz</option>
+                            <option value="project">Project</option>
+                            <option value="lab-report">Lab Report</option>
+                            <option value="exam">Exam</option>
+                        </select>
+                    </div>
+                    <div class="assign-field">
+                        <label>Attachment / Image <span style="font-weight:400;color:var(--text-light);">(optional)</span></label>
+                        <input type="file" id="assignmentImage" accept="image/*" style="display:none;" onchange="previewAssignmentImage(this)">
+                        <div id="assignmentImageDropzone" onclick="document.getElementById('assignmentImage').click()" style="border:2px dashed var(--border);border-radius:0.625rem;padding:1.5rem;text-align:center;cursor:pointer;color:var(--text-light);font-size:0.875rem;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:0.5rem;opacity:0.5;display:block;margin-left:auto;margin-right:auto;"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            <p style="margin:0;">Click to upload image</p>
+                            <p style="margin:0.25rem 0 0;font-size:0.78rem;">PNG, JPG, GIF up to 5MB</p>
+                        </div>
+                        <div id="assignmentImagePreview" style="display:none;margin-top:0.75rem;position:relative;">
+                            <img id="assignmentImageThumb" style="width:100%;max-height:200px;object-fit:cover;border-radius:0.5rem;border:1px solid var(--border);">
+                            <button onclick="clearAssignmentImage()" style="position:absolute;top:0.5rem;right:0.5rem;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1.1rem;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
+                        </div>
+                    </div>
+                    <button class="assign-create-btn" onclick="createAssignment()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                        Create Assignment
+                    </button>
+                </div>
+            </div>
+
+            <div class="portal-card">
+                <div class="portal-card-header">
+                    <h3>Posted Assignments</h3>
+                    <select class="class-selector" id="assignFilterSection" onchange="loadAssignments()">
+                        <option value="all">All Sections</option>
+                        <option value="gc1-11a">11-STEM A</option>
+                        <option value="gc1-11b">11-STEM B</option>
+                        <option value="oc-12b">12-STEM B</option>
+                        <option value="spen-12a">12-STEM A</option>
+                    </select>
+                </div>
+                <div style="padding:1rem;" id="assignmentsList">
+                    <div class="empty-state"><p>No assignments yet. Create one above!</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MY SECTION -->
+<div class="portal-section" id="section-my-section">
+    <h2 class="section-title">My Section</h2>
+    <p class="section-subtitle">View and manage students in your assigned section</p>
+
+    <div id="mySectionContent">
+        <div class="empty-state"><p>Loading your section...</p></div>
+    </div>
+
+    <!-- Add Student Modal trigger area -->
+    <div id="mySectionStudentsArea"></div>
+</div>
+
+        <!-- SECTION SCHEDULE MANAGEMENT -->
+        <div class="portal-section" id="section-section-schedule-mgmt">
+            <h2 class="section-title">Section Schedule</h2>
+            <p class="section-subtitle">Set the weekly class schedule for your section — students will see this in their portal</p>
+
+            <div class="portal-card" style="margin-bottom:1.5rem;">
+                <div class="portal-card-header">
+                    <h3>Select Section</h3>
+                    <select class="class-selector" id="schedSectionSelector" onchange="loadScheduleEditor()">
+                        <option value="">-- Select a section --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="scheduleEditorArea"></div>
+        </div>
+
+        
+        <!-- SCHEDULE -->
+<div class="portal-section" id="section-schedule">
+    <h2 class="section-title">My Schedule</h2>
+    <p class="section-subtitle">Weekly teaching schedule — SY 2026-2027, 2nd Semester</p>
+    <div class="portal-card">
+        <div class="portal-card-header">
+            <h3>Weekly Timetable</h3>
+            <button class="btn-submit-all" onclick="toggleScheduleEdit()" id="scheduleEditBtn">✏️ Edit Schedule</button>
+        </div>
+        <div id="scheduleViewArea"></div>
+    </div>
+</div>
+
+        <!-- CALENDAR -->
+        <div class="portal-section" id="section-calendar">
+            <h2 class="section-title">Calendar & Events</h2>
+            <p class="section-subtitle">Academic calendar and upcoming events</p>
+
+            <div class="portal-grid-2">
+                <div class="portal-card">
+                    <div class="portal-card-header">
+                        <h3>Academic Calendar</h3>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="changeMonth(-1)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <span class="calendar-current-month" id="calendarMonth">March 2026</span>
+                            <button class="calendar-nav-btn" onclick="changeMonth(1)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-container"></div>
+                    <div class="calendar-legend">
+                        <div class="legend-item"><div class="legend-dot today"></div> Today</div>
+                        <div class="legend-item"><div class="legend-dot holiday"></div> Holiday</div>
+                        <div class="legend-item"><div class="legend-dot exam"></div> Exam</div>
+                        <div class="legend-item"><div class="legend-dot meeting"></div> Meeting</div>
+                        <div class="legend-item"><div class="legend-dot event"></div> Event</div>
+                    </div>
+                </div>
+
+                <div class="portal-card">
+                    <div class="portal-card-header"><h3>Upcoming Events</h3></div>
+                    <div class="events-list" id="events-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="portal-section" id="section-profile">
+            <h2 class="section-title">My Profile</h2>
+            <p class="section-subtitle">Your personal and professional information</p>
+
+            <div class="profile-banner" id="profileBanner">
+                <div class="profile-avatar-xl" id="profileAvatarXl">?</div>
+                <div>
+                    <h3 id="profileFullName">Loading...</h3>
+                    <p id="profileRole">Teacher</p>
+                    <div class="profile-chips">
+                        <span class="profile-chip" id="profileEmpIdChip">SY 2026-2027</span>
+                        <span class="profile-chip">SY 2026-2027</span>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="portal-grid-2">
+                <div class="portal-card">
+                    <div class="portal-card-header"><h3>Personal Information</h3></div>
+                    <div class="portal-card-body">
+                        <div class="info-grid" id="profilePersonalInfo">
+                            <div><div class="info-item-label">Full Name</div><div class="info-item-value" id="pFullName">—</div></div>
+                            <div><div class="info-item-label">Email</div><div class="info-item-value" id="pEmail">—</div></div>
+                            <div><div class="info-item-label">Employee ID</div><div class="info-item-value" id="pEmpId">—</div></div>
+                            <div><div class="info-item-label">Contact</div><div class="info-item-value" id="pContact">—</div></div>
+                            <div><div class="info-item-label">Department</div><div class="info-item-value" id="pDepartment">—</div></div>
+                            <div><div class="info-item-label">Status</div><div class="info-item-value" style="color:var(--primary);font-weight:700;">Active</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portal-card">
+                    <div class="portal-card-header"><h3>Teaching Information</h3></div>
+                    <div class="portal-card-body">
+                        <div class="info-grid">
+                            <div><div class="info-item-label">Assigned Sections</div><div class="info-item-value" id="pSections">—</div></div>
+                            <div><div class="info-item-label">Teaching Load</div><div class="info-item-value" id="pTeachingLoad">—</div></div>
+                            <div><div class="info-item-label">Total Students</div><div class="info-item-value" id="pTotalStudents">—</div></div>
+                            <div><div class="info-item-label">School Year</div><div class="info-item-value">2026-2027</div></div>
+                            <div><div class="info-item-label">Semester</div><div class="info-item-value">2nd Semester</div></div>
+                            <div><div class="info-item-label">Status</div><div class="info-item-value" style="color:var(--primary);font-weight:700;">Active</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portal-card">
+                <div class="portal-card-header"><h3>Class Performance Summary</h3></div>
+                <div class="portal-card-body" id="profilePerformance">
+                    <div class="empty-state"><p>Loading performance data...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+<div class="portal-section" id="section-settings">
+    <h2 class="section-title">Settings</h2>
+    <p class="section-subtitle">Manage your account and password</p>
+
+    <div class="portal-card" style="max-width:520px;">
+        <div class="portal-card-header"><h3>Profile Information</h3></div>
+        <div style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.875rem;">
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">First Name</label>
+                <input type="text" id="settingsFirstName" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">Last Name</label>
+                <input type="text" id="settingsLastName" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">Email Address</label>
+                <input type="email" id="settingsEmail" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <button class="btn-submit-all" onclick="saveTeacherProfile()" style="align-self:flex-start;">Save Profile</button>
+        </div>
+    </div>
+
+    <div class="portal-card" style="max-width:520px;margin-top:1.5rem;">
+        <div class="portal-card-header"><h3>Change Password</h3></div>
+        <div style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.875rem;">
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">Current Password</label>
+                <input type="password" id="settingsCurrentPw" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">New Password</label>
+                <input type="password" id="settingsNewPw" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <div>
+                <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:0.375rem;">Confirm New Password</label>
+                <input type="password" id="settingsConfirmPw" style="width:100%;padding:0.625rem 0.875rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;box-sizing:border-box;">
+            </div>
+            <button class="btn-submit-all" onclick="updateTeacherPassword()" style="align-self:flex-start;">Update Password</button>
+        </div>
+    </div>
+</div>
+
+    </main>
+</div>
+
+
+
+<!-- Add before </body>: -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<script>
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.portal-sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+// Close sidebar when nav link is clicked on mobile
+document.querySelectorAll('.portal-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) toggleSidebar();
+    });
+});
+
+// ===== DATA =====
+// sectionStudents is now dynamic — loaded from ffhnas_sections localStorage
+let sectionStudents = {};
+let sectionNames = { 'all': 'All Sections' };
+let mySections = []; // teacher's assigned sections
+
+function getSchoolEvents() {
+    // Collect events from all years stored by admin
+    const allEvents = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('ffhnas_calendar_events_')) {
+            const events = JSON.parse(localStorage.getItem(key) || '[]');
+            allEvents.push(...events);
+        }
+    }
+    return allEvents;
+}
+
+let currentGradeSection     = null;
+let currentAttendanceSection = null;
+let assignments = [];
+function getTeacherStorageKey() {
+    const u = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    return `schoolAssignments_${u.id}`;
+}
+let currentMonth = new Date().getMonth();
+let currentYear  = new Date().getFullYear();
+
+// ===== LOAD TEACHER SECTIONS =====
+function loadTeacherSections() {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const teacherName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : '';
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+
+    // Filter sections assigned to this teacher
+    mySections = allSections.filter(s => 
+    s.teacher === teacherName || 
+    (s.subject_teachers || []).some(t => t.teacher_id === currentUser.id || t.teacher === teacherName)
+);
+
+    // Build sectionStudents and sectionNames from assigned sections
+    sectionStudents = {};
+    sectionNames = { 'all': 'All Sections' };
+
+    mySections.forEach(s => {
+        const key = `section_${s.id}`;
+        sectionStudents[key] = (s.students || []).map(st => ({
+            id: String(st.id),
+            name: st.name,
+            prelim: 0, midterm: 0, finals: 0
+        }));
+        sectionNames[key] = `${s.name} (Gr.${s.grade} ${s.strand})`;
+    });
+
+    // Set defaults
+    const keys = Object.keys(sectionStudents);
+    currentGradeSection     = keys[0] || null;
+    currentAttendanceSection = keys[0] || null;
+
+    // Update all section selectors
+    populateSectionSelectors();
+}
+
+function populateSectionSelectors() {
+    const options = mySections.map(s => {
+        const key = `section_${s.id}`;
+        return `<option value="${key}">${sectionNames[key]}</option>`;
+    }).join('');
+
+    const allOption = `<option value="all">All Sections</option>`;
+
+    const gradesSelector = document.getElementById('gradesClassSelector');
+    const attendanceSelector = document.getElementById('attendanceClassSelector');
+    const assignSectionSelector = document.getElementById('assignmentSection');
+    const assignFilterSelector = document.getElementById('assignFilterSection');
+
+    if (gradesSelector) gradesSelector.innerHTML = options || `<option value="">No sections assigned</option>`;
+    if (attendanceSelector) attendanceSelector.innerHTML = options || `<option value="">No sections assigned</option>`;
+    if (assignSectionSelector) assignSectionSelector.innerHTML = allOption + options;
+   if (assignFilterSelector) assignFilterSelector.innerHTML = allOption + options;
+
+// Populate subject dropdown from teacher's sections
+populateSubjectDropdown();
+
+// Update My Classes section
+renderMyClasses();
+}
+
+function populateSubjectDropdown() {
+    const sel = document.getElementById('assignmentSubject');
+    if (!sel) return;
+
+    const subjects = new Set();
+    mySections.forEach(s => {
+        if (s.subject) subjects.add(s.subject);
+        (s.subject_teachers || []).forEach(t => {
+            if (t.subject) subjects.add(t.subject);
+        });
+    });
+
+    if (!subjects.size) {
+        sel.innerHTML = '<option value="">No subjects found — set subject in My Section</option>';
+        return;
+    }
+
+    sel.innerHTML = [...subjects].map(sub => `<option value="${sub}">${sub}</option>`).join('');
+}
+
+function renderMyClasses() {
+    const grid = document.querySelector('.classes-grid');
+    if (!grid) return;
+
+    if (!mySections.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:3rem;text-align:center;"><p>No sections assigned to you yet. Contact the administrator.</p></div>`;
+        return;
+    }
+
+    const colors = ['chemistry', 'shelly', 'organic', 'spen'];
+    grid.innerHTML = mySections.map((s, i) => {
+        const key = `section_${s.id}`;
+        const studentCount = (s.students || []).length;
+        const colorClass = colors[i % colors.length];
+        return `
+            <div class="class-card">
+                <div class="class-header ${colorClass}">
+                    <div>
+                        <h3>${s.name}</h3>
+                        <p style="font-size:0.82rem;color:var(--text-light);margin-top:0.25rem;">Grade ${s.grade} · ${s.strand}</p>
+                    </div>
+                    <span class="class-badge">Gr.${s.grade} ${s.strand}</span>
+                </div>
+                <div class="class-body">
+                    <p>Assigned section for SY 2026-2027.</p>
+                    <div class="class-stats">
+                        <span>👥 ${studentCount} student${studentCount !== 1 ? 's' : ''}</span>
+                        <span>📊 Grade ${s.grade}</span>
+                        <span>🏫 ${s.strand}</span>
+                    </div>
+                </div>
+                <div class="class-footer">
+                    <button class="btn-class-action" onclick="switchSection('grades');changeGradeSection('${key}');document.getElementById('gradesClassSelector').value='${key}'">View Grades</button>
+                    <button class="btn-class-secondary" onclick="switchSection('attendance');changeAttendanceSection('${key}');document.getElementById('attendanceClassSelector').value='${key}'">Attendance</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.portal-nav-link').forEach(link => {
+        link.addEventListener('click', () => switchSection(link.getAttribute('data-section')));
+    });
+
+
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const now  = new Date();
+    const hour = now.getHours();
+    const greet = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+    const displayName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Teacher';
+    const initials = `${(currentUser?.first_name||'?').charAt(0)}${(currentUser?.last_name||'').charAt(0)}`.toUpperCase();
+const headerAvatar = document.getElementById('headerAvatar');
+const headerName   = document.getElementById('headerName');
+const headerRole   = document.getElementById('headerRole');
+if (headerAvatar) headerAvatar.textContent = initials;
+if (headerName)   headerName.textContent   = displayName;
+if (headerRole)   headerRole.textContent   = currentUser?.role === 'teacher' ? 'Teacher' : (currentUser?.role || 'Teacher');
+    document.getElementById('dashGreeting').textContent = `${greet}, ${displayName}! 👋`;
+    document.getElementById('dashDate').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + ' · SY 2026-2027, 2nd Semester';
+    const dashDateShort = document.getElementById('dashDateShort');
+    if (dashDateShort) dashDateShort.textContent = now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+    // Load teacher's sections first, then init everything
+    loadTeacherSections();
+    initScheduleEditor();
+
+    initAnnouncements();
+    if (currentGradeSection) loadGradesForSection(currentGradeSection);
+    if (currentAttendanceSection) loadAttendanceForSection(currentAttendanceSection);
+    assignments = JSON.parse(localStorage.getItem(getTeacherStorageKey()) || '[]');
+    loadAssignments();
+    updateAssignmentCount();
+    loadAnnouncements();
+loadProfile();
+renderCalendar();
+    renderUpcomingEvents();
+
+    const dateInput = document.getElementById('assignmentDueDate');
+    if (dateInput) dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+
+    const attendanceDateInput = document.getElementById('attendanceDate');
+if (attendanceDateInput) attendanceDateInput.value = new Date().toISOString().split('T')[0];
+});
+
+// ===== NAVIGATION =====
+function switchSection(name) {
+    document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.portal-nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById(`section-${name}`)?.classList.add('active');
+    document.querySelector(`[data-section="${name}"]`)?.classList.add('active');
+    document.querySelector('.portal-main').scrollTop = 0;
+    if (name === 'my-section') loadMySection();
+    if (name === 'section-schedule-mgmt') initScheduleEditor();
+    if (name === 'announcements') loadAnnouncements();
+    if (name === 'settings') loadTeacherSettings();
+if (name === 'schedule') renderMySchedule();
+if (name === 'profile') loadProfile();
+}
+
+// ===== ANNOUNCEMENTS =====
+function initAnnouncements() {
+    if (!localStorage.getItem('ffhnas_announcements')) {
+        const sample = [
+            { id:1, title:'Welcome to the New Semester', content:'We are excited to welcome all teachers for the new academic semester. Please review your class schedules and prepare your materials.', priority:'normal', postedBy:'Admin', date:'2026-02-20' },
+            { id:2, title:'Urgent: Faculty Meeting Tomorrow', content:'There will be a mandatory faculty meeting tomorrow at 3:00 PM in the conference room. Attendance is required for all teaching staff.', priority:'urgent', postedBy:'Principal', date:'2026-02-24' }
+        ];
+        localStorage.setItem('ffhnas_announcements', JSON.stringify(sample));
+    }
+}
+
+function loadAnnouncements() {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const teacherName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Teacher';
+
+    const teacherNotices = JSON.parse(localStorage.getItem('ffhnas_teacher_announcements') || '[]');
+    const announcements = teacherNotices.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    // Mark all as seen for badge purposes
+    const seenKey = `seen_notices_${currentUser?.id}`;
+    const seenIds = JSON.parse(localStorage.getItem(seenKey) || '[]');
+    const unreadCount = announcements.filter(a => !seenIds.includes(a.id)).length;
+
+    const badge = document.getElementById('announcementsBadge');
+    const count = document.getElementById('announcementCount');
+    if (badge) { badge.textContent = unreadCount; badge.style.display = unreadCount > 0 ? 'inline' : 'none'; }
+    if (count) count.textContent = `${announcements.length} notice${announcements.length !== 1 ? 's' : ''} from administration`;
+
+    const categoryConfig = {
+        urgent:   { color: '#ef4444', bg: '#fef2f2', border: '#fecaca', icon: '🚨', label: 'URGENT' },
+        academic: { color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', icon: '📚', label: 'ACADEMIC' },
+        event:    { color: '#8b5cf6', bg: '#f5f3ff', border: '#ddd6fe', icon: '📅', label: 'EVENT' },
+        general:  { color: '#10b981', bg: '#f0fdf4', border: '#a7f3d0', icon: '📢', label: 'GENERAL' }
+    };
+
+    const renderAnn = (ann) => {
+        const cfg = categoryConfig[ann.category] || categoryConfig.general;
+        const dateStr = ann.created_at
+            ? new Date(ann.created_at).toLocaleDateString('en-US', {weekday:'short',month:'short',day:'numeric',year:'numeric'})
+            : ann.date || '';
+
+        const repliesHtml = (ann.replies || []).map((r, idx) => {
+    const isAdmin = r.isAdminReply;
+    const avatarBg = isAdmin ? 'linear-gradient(135deg,#f59e0b,#ef4444)' : 'linear-gradient(135deg,#6366f1,#8b5cf6)';
+    const replyToHtml = (r.replyToIdx !== undefined && ann.replies[r.replyToIdx]) ? `
+        <div style="background:#f1f5f9;border-left:3px solid #f59e0b;padding:0.3rem 0.6rem;border-radius:0.25rem;margin-bottom:0.35rem;font-size:0.75rem;color:#64748b;">
+            ↩ ${ann.replies[r.replyToIdx].author}: "${ann.replies[r.replyToIdx].text.substring(0,80)}${ann.replies[r.replyToIdx].text.length>80?'...':''}"
+        </div>` : '';
+    return `
+        <div style="display:flex;gap:0.625rem;align-items:flex-start;padding:0.5rem 0.5rem;border-top:1px solid #f1f5f9;${isAdmin ? 'background:#fffbeb;border-radius:0.375rem;margin:0.25rem 0;' : ''}">
+            <div style="width:26px;height:26px;border-radius:50%;background:${avatarBg};display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:white;flex-shrink:0;">${r.author.charAt(0).toUpperCase()}</div>
+            <div style="flex:1;">
+                <div style="font-size:0.78rem;font-weight:600;">${r.author} ${isAdmin ? '<span style="font-size:0.65rem;background:#f59e0b;color:white;padding:0.1rem 0.4rem;border-radius:999px;font-weight:700;">ADMIN</span>' : ''} <span style="color:var(--text-light);font-weight:400;">· ${new Date(r.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span></div>
+                ${replyToHtml}
+                <div style="font-size:0.82rem;color:var(--text);margin-top:0.15rem;line-height:1.5;">${r.text}</div>
+            </div>
+            ${r.author === teacherName ? `
+            <button onclick="deleteTeacherReply(${ann.id}, ${idx})" title="Delete reply" style="background:none;border:none;cursor:pointer;color:#94a3b8;padding:0.25rem;border-radius:0.25rem;flex-shrink:0;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            </button>` : ''}
+        </div>`;
+}).join('');
+
+        // Only show reply box for teacher notices (not general announcements)
+        const replyBox = `
+            <div style="display:flex;gap:0.5rem;align-items:center;padding-top:0.75rem;border-top:1px solid #f1f5f9;">
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:white;flex-shrink:0;">${teacherName.charAt(0).toUpperCase()}</div>
+                <input type="text" id="replyInput_${ann.id}" placeholder="Write a reply to admin..." style="flex:1;padding:0.5rem 0.875rem;border:1px solid var(--border);border-radius:999px;font-size:0.82rem;outline:none;background:var(--light);" onkeydown="if(event.key==='Enter') postTeacherReply(${ann.id},'${teacherName}')">
+                <button onclick="postTeacherReply(${ann.id},'${teacherName}')" style="padding:0.5rem 1rem;background:var(--primary);color:white;border:none;border-radius:999px;font-size:0.8rem;font-weight:600;cursor:pointer;">Reply</button>
+            </div>`;
+
+        return `
+        <div style="background:white;border:1px solid ${cfg.border};border-left:4px solid ${cfg.color};border-radius:0.875rem;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:flex-start;gap:0.875rem;margin-bottom:0.875rem;">
+                <div style="width:42px;height:42px;border-radius:0.625rem;background:${cfg.bg};display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">${cfg.icon}</div>
+                <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.3rem;">
+                        <h4 style="font-size:1rem;font-weight:700;color:var(--dark);margin:0;">${ann.title}</h4>
+                        <span style="font-size:0.7rem;font-weight:700;color:${cfg.color};background:${cfg.bg};padding:0.15rem 0.5rem;border-radius:999px;letter-spacing:0.06em;">${cfg.label}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.875rem;font-size:0.78rem;color:var(--text-light);">
+                        <span>👤 ${ann.creator_name || 'Administrator'}</span>
+                        <span>📅 ${dateStr}</span>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size:0.875rem;color:var(--text);line-height:1.75;margin:0 0 1rem;white-space:pre-wrap;">${ann.content}</p>
+            ${(ann.replies||[]).length ? `
+            <div style="background:#f8fafc;border-radius:0.5rem;padding:0.625rem 0.875rem;margin-bottom:0.875rem;">
+                <div style="font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem;">💬 Replies (${(ann.replies||[]).length})</div>
+                ${repliesHtml}
+            </div>` : ''}
+            ${replyBox}
+        </div>`;
+    };
+
+    const empty = `
+        <div style="padding:3rem;text-align:center;">
+            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📭</div>
+            <p style="font-weight:600;color:var(--text);font-size:1rem;">No notices yet</p>
+            <p style="font-size:0.875rem;color:var(--text-light);margin-top:0.25rem;">The administration hasn't posted any notices for teachers.</p>
+        </div>`;
+
+    const fullList = document.getElementById('announcementsList');
+    const dashList = document.getElementById('dashboardAnnouncements');
+
+    if (fullList) fullList.innerHTML = announcements.length ? announcements.map(renderAnn).join('') : empty;
+    if (dashList) dashList.innerHTML = announcements.length
+        ? announcements.slice(0, 3).map(ann => {
+            const cfg = categoryConfig[ann.category] || categoryConfig.general;
+            const dateStr = ann.created_at || ann.date
+                ? new Date(ann.created_at || ann.date).toLocaleDateString('en-US', {month:'short',day:'numeric'})
+                : '';
+            return `
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;padding:0.75rem 0;border-bottom:1px solid var(--border);">
+                <div style="width:36px;height:36px;border-radius:0.5rem;background:${cfg.bg};display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">${cfg.icon}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:600;font-size:0.875rem;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ann.title}</div>
+                    <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.15rem;">${dateStr}</div>
+                </div>
+                <span style="font-size:0.68rem;font-weight:700;color:${cfg.color};background:${cfg.bg};padding:0.15rem 0.5rem;border-radius:999px;flex-shrink:0;">${cfg.label}</span>
+            </div>`;
+        }).join('')
+        : empty;
+}
+
+function markNoticeViewed(annId) {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!currentUser) return;
+
+    // Track for badge (seen IDs per user)
+    const seenKey = `seen_notices_${currentUser.id}`;
+    const seenIds = JSON.parse(localStorage.getItem(seenKey) || '[]');
+    if (!seenIds.includes(annId)) {
+        seenIds.push(annId);
+        localStorage.setItem(seenKey, JSON.stringify(seenIds));
+    }
+
+    // Track for admin viewer list
+    const notices = JSON.parse(localStorage.getItem('ffhnas_teacher_announcements') || '[]');
+    const notice = notices.find(a => a.id === annId);
+    if (!notice) return;
+    if (!notice.views) notice.views = [];
+    const alreadyViewed = notice.views.find(v => v.id === currentUser.id);
+    if (alreadyViewed) return;
+    notice.views.push({
+        id: currentUser.id,
+        name: `${currentUser.first_name} ${currentUser.last_name}`,
+        viewed_at: new Date().toISOString()
+    });
+    localStorage.setItem('ffhnas_teacher_announcements', JSON.stringify(notices));
+}
+
+function postTeacherReply(annId, teacherName) {
+    const input = document.getElementById(`replyInput_${annId}`);
+    const text = input?.value.trim();
+    if (!text) return;
+
+    const notices = JSON.parse(localStorage.getItem('ffhnas_teacher_announcements') || '[]');
+    const notice = notices.find(a => a.id === annId);
+    if (!notice) return;
+    if (!notice.replies) notice.replies = [];
+    notice.replies.push({ author: teacherName, text, created_at: new Date().toISOString() });
+    localStorage.setItem('ffhnas_teacher_announcements', JSON.stringify(notices));
+
+    showToast('Reply posted', 'Your reply has been saved.', 'success');
+    loadAnnouncements();
+}
+
+function deleteTeacherReply(annId, replyIdx) {
+    if (!confirm('Delete your reply?')) return;
+    const notices = JSON.parse(localStorage.getItem('ffhnas_teacher_announcements') || '[]');
+    const notice = notices.find(a => a.id === annId);
+    if (!notice) return;
+    notice.replies.splice(replyIdx, 1);
+    localStorage.setItem('ffhnas_teacher_announcements', JSON.stringify(notices));
+    showToast('Deleted', 'Reply removed.', 'success');
+    loadAnnouncements();
+}
+
+function postAnnouncement() {
+    const title    = document.getElementById('annTitle').value.trim();
+    const content  = document.getElementById('annContent').value.trim();
+    const priority = document.getElementById('annPriority').value;
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+const postedBy = document.getElementById('annPostedBy').value.trim() || (currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Teacher');
+
+    if (!title || !content) { showToast('Error', 'Please fill in title and content.', 'error'); return; }
+
+    const announcements = JSON.parse(localStorage.getItem('ffhnas_announcements') || '[]');
+    announcements.push({ id: Date.now(), title, content, priority, postedBy, date: new Date().toISOString().split('T')[0] });
+    localStorage.setItem('ffhnas_announcements', JSON.stringify(announcements));
+
+    document.getElementById('annTitle').value   = '';
+    document.getElementById('annContent').value = '';
+    document.getElementById('annPriority').value = 'normal';
+
+    loadAnnouncements();
+    showToast('Posted!', `"${title}" announcement published.`, 'success');
+}
+
+function deleteAnnouncement(id) {
+    if (!confirm('Delete this announcement?')) return;
+    let announcements = JSON.parse(localStorage.getItem('ffhnas_announcements') || '[]');
+    announcements = announcements.filter(a => a.id !== id);
+    localStorage.setItem('ffhnas_announcements', JSON.stringify(announcements));
+    loadAnnouncements();
+    showToast('Deleted', 'Announcement removed.', 'success');
+}
+
+// ===== GRADES =====
+const API = 'http://localhost/school/api/';
+
+function changeGradeSection(sectionId) {
+    currentGradeSection = sectionId;
+    loadGradesForSection(sectionId);
+}
+
+function loadGradesForSection(sectionId) {
+    const tbody = document.getElementById('gradesTableBody');
+    if (!sectionId || !tbody) return;
+
+    const gClass  = g => g >= 90 ? 'excellent' : g >= 80 ? 'good' : g >= 75 ? 'average' : 'low';
+    const remarks = g => g >= 90 ? 'Excellent' : g >= 80 ? 'Good' : g >= 75 ? 'Passing' : 'Failed';
+
+     const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const subjectSlug = getTeacherSubjectForSection(currentUser, sectionId);
+    const saved = JSON.parse(localStorage.getItem(`grades_${sectionId}_${subjectSlug}`) || '{}');
+    const raw = sectionStudents[sectionId] || [];
+
+    if (!raw.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-light);">No students in this section</td></tr>`;
+        document.getElementById('sectionAvg').textContent = '—';
+        document.getElementById('sectionStudentCount').textContent = '0';
+        document.getElementById('sectionPassRate').textContent = '—';
+        return;
+    }
+
+    const students = raw.map(s => {
+        const overrides = saved[s.id] || {};
+        return {
+            id: s.id, student_id: s.id, name: s.name,
+            q1: overrides.q1 !== undefined && overrides.q1 !== '' ? parseFloat(overrides.q1) : null,
+            q2: overrides.q2 !== undefined && overrides.q2 !== '' ? parseFloat(overrides.q2) : null,
+            q3: overrides.q3 !== undefined && overrides.q3 !== '' ? parseFloat(overrides.q3) : null,
+            q4: overrides.q4 !== undefined && overrides.q4 !== '' ? parseFloat(overrides.q4) : null
+        };
+    });
+
+    tbody.innerHTML = students.map(s => {
+        const filled = [s.q1, s.q2, s.q3, s.q4].filter(v => v !== null && !isNaN(v));
+        const final = filled.length ? (filled.reduce((a,b) => a+b, 0) / filled.length).toFixed(1) : '—';
+        return `
+            <tr>
+                <td style="color:var(--text-light);font-size:0.82rem;">${s.student_id}</td>
+                <td><strong style="color:var(--dark)">${s.name}</strong></td>
+                <td><input type="number" class="grade-input" id="q1_${s.id}" value="${s.q1 ?? ''}" min="0" max="100" oninput="recalcFinal('${s.id}')"></td>
+                <td><input type="number" class="grade-input" id="q2_${s.id}" value="${s.q2 ?? ''}" min="0" max="100" oninput="recalcFinal('${s.id}')"></td>
+                <td><input type="number" class="grade-input" id="q3_${s.id}" value="${s.q3 ?? ''}" min="0" max="100" oninput="recalcFinal('${s.id}')"></td>
+                <td><input type="number" class="grade-input" id="q4_${s.id}" value="${s.q4 ?? ''}" min="0" max="100" oninput="recalcFinal('${s.id}')"></td>
+                <td><strong id="final_${s.id}" style="font-size:1rem;color:var(--dark)">${final}</strong></td>
+                <td><span class="grade-badge ${gClass(parseFloat(final))}" id="remarks_${s.id}">${remarks(parseFloat(final))}</span></td>
+                <td><button class="btn-sm btn-save" onclick="saveGrade('${s.id}', '${s.name}', '${sectionId}')">Save</button></td>
+            </tr>`;
+    }).join('');
+
+    const avgs = students.map(s => {
+        const filled = [s.q1, s.q2, s.q3, s.q4].filter(v => v !== null && !isNaN(v));
+        return filled.length ? filled.reduce((a,b) => a+b, 0) / filled.length : null;
+    }).filter(v => v !== null);
+    const avg = avgs.length ? (avgs.reduce((a,b) => a+b, 0) / avgs.length).toFixed(1) : '—';
+    const passing = avgs.filter(g => g >= 75).length;
+    document.getElementById('sectionAvg').textContent          = avg;
+    document.getElementById('sectionStudentCount').textContent  = students.length;
+    document.getElementById('sectionPassRate').textContent      = avgs.length ? Math.round((passing / students.length) * 100) + '%' : '—';
+}
+
+function recalcFinal(rowId, studentId = rowId) {
+    const vals = ['q1','q2','q3','q4']
+        .map(q => { const v = document.getElementById(`${q}_${rowId}`)?.value; return v !== '' ? parseFloat(v) : NaN; })
+        .filter(v => !isNaN(v));
+    const final = vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : '—';
+   const gClass  = g => g >= 90 ? 'excellent' : g >= 80 ? 'good' : g >= 75 ? 'average' : 'low';
+    const remarks = g => g >= 90 ? 'Excellent' : g >= 80 ? 'Good' : g >= 75 ? 'Passing' : 'Failed';
+    const finalEl   = document.getElementById(`final_${studentId}`);
+    const remarksEl = document.getElementById(`remarks_${studentId}`);
+    if (finalEl)   finalEl.textContent = final;
+    if (remarksEl) { remarksEl.textContent = remarks(parseFloat(final)); remarksEl.className = `grade-badge ${gClass(parseFloat(final))}`; }
+}
+
+function saveGrade(studentId, name, sectionId) {
+    const q1 = document.getElementById(`q1_${studentId}`)?.value;
+    const q2 = document.getElementById(`q2_${studentId}`)?.value;
+    const q3 = document.getElementById(`q3_${studentId}`)?.value;
+    const q4 = document.getElementById(`q4_${studentId}`)?.value;
+
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const subjectSlug = getTeacherSubjectForSection(currentUser, sectionId);
+    const key = `grades_${sectionId}_${subjectSlug}`;
+    const records = JSON.parse(localStorage.getItem(key) || '{}');
+    records[studentId] = { q1, q2, q3, q4 };
+    localStorage.setItem(key, JSON.stringify(records));
+    recalcFinal(studentId);
+    showToast('Saved!', `${name}'s grades saved successfully.`, 'success');
+}
+
+function exportGrades() {
+    window.open(`${API}/export_grades.php?section=${currentGradeSection}`, '_blank');
+}
+
+function submitAllGrades() {
+    if (!confirm('Submit all grades for this section?')) return;
+    fetch(`${API}/submit_all_grades.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: currentGradeSection })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.success) showToast('Submitted!', 'All grades submitted successfully.', 'success');
+        else             showToast('Error', res.message || 'Failed to submit.', 'error');
+    })
+    .catch(() => showToast('Error', 'Could not connect to server.', 'error'));
+}
+
+
+// ===== ATTENDANCE =====
+function changeAttendanceSection(sectionId) {
+    currentAttendanceSection = sectionId;
+    loadAttendanceForSection(sectionId);
+}
+
+function loadAttendanceForSection(sectionId) {
+    const container = document.getElementById('attendanceTrackingBody');
+    if (!sectionId || !container) return;
+
+    const today = document.getElementById('attendanceDate')?.value || new Date().toISOString().split('T')[0];
+    const students = sectionStudents[sectionId] || [];
+    const saved = JSON.parse(localStorage.getItem(`attendance_${sectionId}_${today}`) || '{}');
+
+    if (!students.length) {
+        container.innerHTML = `<div class="empty-state" style="padding:2rem;text-align:center;"><p>No students in this section yet.</p></div>`;
+        updateAttendanceCounts();
+        return;
+    }
+
+    container.innerHTML = [...students].sort((a, b) => {
+    const lastA = a.name.split(' ').slice(-1)[0];
+    const lastB = b.name.split(' ').slice(-1)[0];
+    return lastA.localeCompare(lastB);
+}).map(s => {
+    const status = saved[String(s.id)] || '';
+    return `
+        <div class="attendance-student" data-student-id="${s.id}">
+            <div class="student-info">
+                <span class="student-name">${s.name}</span>
+                <span class="student-id">${s.id}</span>
+            </div>
+            <div class="attendance-buttons">
+                <button class="btn-attendance present ${status === 'Present' ? 'selected' : ''}" onclick="markAttendance('${s.id}', '${s.name}', 'Present', this)">✓ Present</button>
+                <button class="btn-attendance absent ${status === 'Absent' ? 'selected' : ''}" onclick="markAttendance('${s.id}', '${s.name}', 'Absent', this)">✗ Absent</button>
+                <button class="btn-attendance late ${status === 'Late' ? 'selected' : ''}" onclick="markAttendance('${s.id}', '${s.name}', 'Late', this)">⏰ Late</button>
+            </div>
+        </div>`;
+}).join('');
+
+    updateAttendanceCounts();
+}
+
+function markAttendance(studentId, name, status, btn) {
+    btn.closest('.attendance-buttons').querySelectorAll('.btn-attendance').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    updateAttendanceCounts();
+}
+
+function updateAttendanceCounts() {
+    document.getElementById('attPresentCount').textContent = document.querySelectorAll('.btn-attendance.present.selected').length;
+    document.getElementById('attAbsentCount').textContent  = document.querySelectorAll('.btn-attendance.absent.selected').length;
+    document.getElementById('attLateCount').textContent    = document.querySelectorAll('.btn-attendance.late.selected').length;
+}
+
+function markAllPresent() {
+    document.querySelectorAll('.attendance-buttons').forEach(group => {
+        group.querySelectorAll('.btn-attendance').forEach(b => b.classList.remove('selected'));
+        group.querySelector('.btn-attendance.present')?.classList.add('selected');
+    });
+    updateAttendanceCounts();
+
+    const today = document.getElementById('attendanceDate')?.value || new Date().toISOString().split('T')[0];
+    const key = `attendance_${currentAttendanceSection}_${today}`;
+    const records = {};
+
+    document.querySelectorAll('.attendance-student').forEach(row => {
+        const studentId = row.getAttribute('data-student-id');
+        if (studentId) records[studentId] = 'Present';
+    });
+
+    localStorage.setItem(key, JSON.stringify(records));
+    showToast('All Present', 'All students marked as present.', 'success');
+}
+
+function submitAttendance() {
+    const total  = document.querySelectorAll('.attendance-student').length;
+    const marked = document.querySelectorAll('.btn-attendance.selected').length;
+    if (marked < total) { showToast('Warning', `${total - marked} student(s) not yet marked.`, 'error'); return; }
+
+    const today = document.getElementById('attendanceDate')?.value || new Date().toISOString().split('T')[0];
+    const key = `attendance_${currentAttendanceSection}_${today}`;
+    const records = {};
+
+    document.querySelectorAll('.attendance-student').forEach(row => {
+        const selectedBtn = row.querySelector('.btn-attendance.selected');
+        // Read student ID from the data attribute on the row
+        const studentId = row.getAttribute('data-student-id');
+        if (selectedBtn && studentId) {
+            records[studentId] = selectedBtn.classList.contains('present') ? 'Present'
+                               : selectedBtn.classList.contains('absent')  ? 'Absent'
+                               : 'Late';
+        }
+    });
+
+    localStorage.setItem(key, JSON.stringify(records));
+    showToast('Saved!', 'Attendance saved successfully.', 'success');
+}
+
+// ===== ASSIGNMENTS =====
+function previewAssignmentImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('Error', 'Image must be under 5MB', 'error'); input.value = ''; return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('assignmentImageThumb').src = e.target.result;
+        document.getElementById('assignmentImagePreview').style.display = 'block';
+        document.getElementById('assignmentImageDropzone').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearAssignmentImage() {
+    document.getElementById('assignmentImage').value = '';
+    document.getElementById('assignmentImagePreview').style.display = 'none';
+    document.getElementById('assignmentImageDropzone').style.display = 'block';
+}
+
+function createAssignment() {
+    const subject  = document.getElementById('assignmentSubject').value;
+    const section  = document.getElementById('assignmentSection').value;
+    const title    = document.getElementById('assignmentTitle').value.trim();
+    const desc     = document.getElementById('assignmentDescription').value.trim();
+    const dueDate  = document.getElementById('assignmentDueDate').value;
+    const points   = parseInt(document.getElementById('assignmentPoints').value);
+    const type     = document.getElementById('assignmentType').value;
+    const thumb    = document.getElementById('assignmentImageThumb');
+    const image    = thumb?.src && !thumb.src.endsWith(window.location.href) ? thumb.src : null;
+
+    if (!title || !desc || !dueDate) { showToast('Error', 'Please fill in all required fields.', 'error'); return; }
+
+    assignments.push({
+        id: Date.now(), subject, section,
+        sectionName: sectionNames[section] || section,
+        title, description: desc, dueDate, points, type, image,
+        createdAt: new Date().toISOString(),
+        status: 'active', submissions: []
+    });
+
+    localStorage.setItem(getTeacherStorageKey(), JSON.stringify(assignments));
+
+    document.getElementById('assignmentTitle').value       = '';
+    document.getElementById('assignmentDescription').value = '';
+    document.getElementById('assignmentDueDate').value     = '';
+    document.getElementById('assignmentPoints').value      = '100';
+    document.getElementById('assignmentSection').value     = 'all';
+    document.getElementById('assignmentType').value        = 'homework';
+    clearAssignmentImage();
+
+    loadAssignments();
+    updateAssignmentCount();
+    showToast('Created!', `"${title}" posted to ${sectionNames[section]}.`, 'success');
+}
+
+function loadAssignments() {
+    const container   = document.getElementById('assignmentsList');
+    const filterValue = document.getElementById('assignFilterSection')?.value || 'all';
+    const filtered    = filterValue === 'all' ? assignments : assignments.filter(a => a.section === filterValue || a.section === 'all');
+
+    if (!filtered.length) {
+        container.innerHTML = '<div class="empty-state"><p>No assignments found.</p></div>';
+        return;
+    }
+
+    const typeColors = { homework:'blue', quiz:'amber', project:'purple', 'lab-report':'green', exam:'red' };
+
+    container.innerHTML = [...filtered].sort((a,b) => {
+    const lastA = (a.sectionName || '').split(' ').slice(-1)[0];
+    const lastB = (b.sectionName || '').split(' ').slice(-1)[0];
+    return lastA.localeCompare(lastB) || new Date(a.dueDate) - new Date(b.dueDate);
+}).map(a => {
+        const due   = new Date(a.dueDate);
+        const days  = Math.ceil((due - new Date()) / 86400000);
+        let dueText = due.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        let dueColor = 'var(--text-light)';
+        if (days < 0) { dueText += ' Â· Overdue'; dueColor = 'var(--danger)'; }
+        else if (days === 0) { dueText += ' Â· Today!'; dueColor = 'var(--accent)'; }
+        else if (days <= 3) { dueText += ` Â· ${days}d left`; dueColor = 'var(--accent)'; }
+
+        return `
+            <div class="assignment-item">
+                <div class="assignment-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="assignment-details">
+                    <h4>${a.title}</h4>
+                    <div class="assignment-meta">
+                        <span class="chip ${typeColors[a.type] || 'blue'}">${(a.type || 'homework').replace('-',' ')}</span>
+                        <span>ðŸ“š ${a.subject}</span>
+                        <span class="chip green">${a.sectionName}</span>
+                        <span style="color:${dueColor};font-weight:600;">ðŸ“… ${dueText}</span>
+                        <span>👥 ${getSubmissionCount(a.id)} submitted</span>
+                        <span>ðŸ“Š ${a.points} pts</span>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text);margin-top:0.375rem;line-height:1.5;">${a.description}</p>
+                    ${a.image ? `<img src="${a.image}" style="margin-top:0.625rem;max-height:140px;border-radius:0.5rem;border:1px solid var(--border);object-fit:cover;display:block;">` : ''}
+                </div>
+                <div class="assignment-actions">
+                    <button class="btn-assignment-action" onclick="viewAssignmentDetails(${a.id})">View</button>
+                    <button class="btn-assignment-delete" onclick="deleteAssignment(${a.id})">Delete</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function getSubmissionCount(assignmentId) {
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    let count = 0;
+    allSections.forEach(s => {
+        (s.students || []).forEach(st => {
+            const saved = JSON.parse(localStorage.getItem(`student_submissions_${st.id}`) || '{}');
+            if (saved[assignmentId]) count++;
+        });
+    });
+    return count;
+}
+
+function updateAssignmentCount() {
+    const badge = document.getElementById('assignmentsBadge');
+    const dash  = document.getElementById('dashAssignmentCount');
+    if (badge) badge.textContent = assignments.length;
+    if (dash)  dash.textContent  = assignments.length;
+}
+
+function viewAssignmentDetails(id) {
+    const a = assignments.find(x => x.id === id);
+    if (!a) return;
+
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const allSubmissions = [];
+    const seenStudents = new Set();
+
+    allSections.forEach(s => {
+        (s.students || []).forEach(st => {
+            const key = String(st.id);
+            if (seenStudents.has(key)) return;
+            seenStudents.add(key);
+            const saved = JSON.parse(localStorage.getItem(`student_submissions_${st.id}`) || '{}');
+            if (saved[id]) allSubmissions.push({ studentName: st.name, studentId: st.id, ...saved[id] });
+        });
+    });
+
+    const isImage = (name) => /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name);
+
+    const subsHtml = allSubmissions.length
+        ? allSubmissions.map(sub => {
+            const scores = JSON.parse(localStorage.getItem('assignment_scores') || '{}');
+            const scoreKey = `${id}_${sub.studentId}`;
+            const existingScore = scores[scoreKey] ?? '';
+
+            const filesHtml = (sub.submittedFiles || []).map(f => {
+                if (isImage(f)) {
+                    const imgData = JSON.parse(localStorage.getItem(`submission_files_${sub.studentId}`) || '{}');
+                    const src = imgData[f] || '';
+                    return src
+                        ? `<div style="display:inline-block;margin:0.25rem 0.25rem 0 0;">
+                            <img src="${src}" onclick="openImageZoom('${src}')" style="max-height:100px;max-width:140px;border-radius:0.375rem;border:1px solid #e2e8f0;cursor:zoom-in;object-fit:cover;" title="Click to zoom">
+                            <div style="font-size:0.68rem;color:#94a3b8;">🖼️ ${f}</div>
+                           </div>`
+                        : `<span style="font-size:0.78rem;background:#e0e7ff;color:#3730a3;padding:0.15rem 0.5rem;border-radius:999px;margin-right:0.25rem;">🖼️ ${f}</span>`;
+                }
+                return `<span style="font-size:0.78rem;background:#f1f5f9;color:#475569;padding:0.15rem 0.5rem;border-radius:999px;margin-right:0.25rem;">📎 ${f}</span>`;
+            }).join('');
+
+            return `
+            <div style="border:1px solid #e2e8f0;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:0.875rem;background:#f8fafc;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">
+                    <div>
+                        <strong style="font-size:0.95rem;color:#0f172a;">${sub.studentName}</strong>
+                        <span style="font-size:0.75rem;color:#94a3b8;margin-left:0.5rem;">📅 ${sub.submittedAt || '—'}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                        <input type="number" id="score_${sub.studentId}" value="${existingScore}" min="0" max="${a.points}" placeholder="Score"
+                            style="width:70px;padding:0.3rem 0.5rem;border:1px solid #cbd5e1;border-radius:0.375rem;font-size:0.82rem;text-align:center;">
+                        <span style="font-size:0.82rem;color:#64748b;">/ ${a.points}</span>
+                        <button onclick="saveScore(${id}, ${sub.studentId}, '${sub.studentName.replace(/'/g,"\\'")}', ${a.points})"
+                            style="padding:0.3rem 0.75rem;background:#3b82f6;color:white;border:none;border-radius:0.375rem;font-size:0.78rem;font-weight:600;cursor:pointer;">Save</button>
+                        ${existingScore !== '' ? `<span style="font-size:0.75rem;font-weight:700;color:#10b981;">✓ ${existingScore}/${a.points}</span>` : ''}
+                    </div>
+                </div>
+                ${sub.submittedNotes ? `<p style="font-size:0.85rem;color:#334155;margin:0.25rem 0 0.5rem;line-height:1.6;background:white;padding:0.5rem 0.75rem;border-radius:0.5rem;border:1px solid #e2e8f0;"><strong>Answer/Notes:</strong> ${sub.submittedNotes}</p>` : ''}
+                ${(sub.submittedFiles || []).length ? `<div style="margin-top:0.375rem;">${filesHtml}</div>` : ''}
+            </div>`;
+        }).join('')
+        : `<div style="text-align:center;padding:2.5rem;color:#94a3b8;"><div style="font-size:2rem;margin-bottom:0.5rem;">📭</div><p style="font-weight:600;">No submissions yet.</p></div>`;
+
+    const existing = document.getElementById('submissionsModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'submissionsModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.innerHTML = `
+        <div style="background:white;border-radius:1rem;padding:1.5rem;width:100%;max-width:620px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
+                <div>
+                    <h3 style="font-size:1.1rem;font-weight:700;margin:0;color:#0f172a;">${a.title}</h3>
+                    <p style="font-size:0.82rem;color:#64748b;margin:0.25rem 0 0;">📚 ${a.subject} · ${a.sectionName} · ${a.points} pts</p>
+                </div>
+                <button onclick="document.getElementById('submissionsModal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0.25rem;">×</button>
+            </div>
+            ${a.image ? `
+            <div style="margin-bottom:1rem;">
+                <img src="${a.image}" onclick="openImageZoom('${a.image}')" style="width:100%;max-height:180px;object-fit:cover;border-radius:0.625rem;border:1px solid #e2e8f0;cursor:zoom-in;" title="Click to zoom assignment image">
+                <div style="font-size:0.72rem;color:#94a3b8;margin-top:0.25rem;">📎 Assignment attachment — click to zoom</div>
+            </div>` : ''}
+            <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;">
+                <span style="background:#dcfce7;color:#166534;padding:0.25rem 0.75rem;border-radius:999px;font-size:0.78rem;font-weight:600;">${allSubmissions.length} Submitted</span>
+                <span style="background:#fee2e2;color:#991b1b;padding:0.25rem 0.75rem;border-radius:999px;font-size:0.78rem;font-weight:600;">Due: ${new Date(a.dueDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+            </div>
+            <h4 style="font-size:0.82rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.75rem;">Student Submissions</h4>
+            ${subsHtml}
+        </div>`;
+
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.body.appendChild(modal);
+}
+
+function saveScore(assignmentId, studentId, studentName, maxPoints) {
+    const input = document.getElementById(`score_${studentId}`);
+    const score = parseFloat(input?.value);
+    if (isNaN(score) || score < 0 || score > maxPoints) {
+        showToast('Error', `Score must be between 0 and ${maxPoints}.`, 'error');
+        return;
+    }
+    const scores = JSON.parse(localStorage.getItem('assignment_scores') || '{}');
+    scores[`${assignmentId}_${studentId}`] = score;
+    localStorage.setItem('assignment_scores', JSON.stringify(scores));
+
+    const saved = JSON.parse(localStorage.getItem(`student_submissions_${studentId}`) || '{}');
+    if (saved[assignmentId]) {
+        saved[assignmentId].status = 'graded';
+        saved[assignmentId].grade = score;
+        localStorage.setItem(`student_submissions_${studentId}`, JSON.stringify(saved));
+    }
+
+    showToast('Score Saved!', `${studentName} scored ${score}/${maxPoints}.`, 'success');
+    viewAssignmentDetails(assignmentId);
+}
+
+function openImageZoom(src) {
+    const existing = document.getElementById('imageZoomModal');
+    if (existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'imageZoomModal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;cursor:zoom-out;';
+    overlay.innerHTML = `<img src="${src}" style="max-width:95vw;max-height:92vh;border-radius:0.5rem;object-fit:contain;box-shadow:0 0 60px rgba(0,0,0,0.5);">`;
+    overlay.addEventListener('click', () => overlay.remove());
+    document.body.appendChild(overlay);
+}
+
+function deleteAssignment(id) {
+    if (!confirm('Delete this assignment?')) return;
+    assignments = assignments.filter(a => a.id !== id);
+    localStorage.setItem(getTeacherStorageKey(), JSON.stringify(assignments));
+    loadAssignments();
+    updateAssignmentCount();
+    showToast('Deleted', 'Assignment removed.', 'success');
+}
+
+// ===== CALENDAR =====
+function renderCalendar() {
+    const container = document.getElementById('calendar-container');
+    if (!container) return;
+
+    const events = getSchoolEvents();
+    const eventMap = {};
+    events.forEach(e => { eventMap[e.date] = e; });
+
+    const typeColors = { holiday:'#ef4444', academic:'#3b82f6', event:'#8b5cf6', exam:'#f59e0b' };
+
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay  = new Date(currentYear, currentMonth + 1, 0);
+    const prevLast = new Date(currentYear, currentMonth, 0);
+    const today    = new Date();
+
+    let html = '<div class="calendar-weekdays">';
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="calendar-weekday">${d}</div>`);
+    html += '</div><div class="calendar-days">';
+
+    for (let x = firstDay.getDay(); x > 0; x--) html += `<div class="calendar-day other-month">${prevLast.getDate() - x + 1}</div>`;
+
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+        const ds    = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        const event = eventMap[ds];
+        const isToday = today.getDate()===i && today.getMonth()===currentMonth && today.getFullYear()===currentYear;
+        const dotColor = event ? (typeColors[event.type] || '#64748b') : '';
+        html += `<div class="calendar-day ${isToday?'current':''} ${event?'has-event':''}" ${event ? `title="${event.title}"` : ''}>
+            ${i}${event ? `<span class="event-dot ${event.type}" style="background:${dotColor}"></span>` : ''}
+        </div>`;
+    }
+
+    const remaining = 42 - (firstDay.getDay() + lastDay.getDate());
+    for (let i = 1; i <= remaining; i++) html += `<div class="calendar-day other-month">${i}</div>`;
+    html += '</div>';
+
+    container.innerHTML = html;
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('calendarMonth').textContent = `${months[currentMonth]} ${currentYear}`;
+}
+
+function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+    renderCalendar();
+}
+
+function renderUpcomingEvents() {
+    const list = document.getElementById('events-list');
+    if (!list) return;
+
+    const events = getSchoolEvents();
+    const today  = new Date();
+    const typeColors = { holiday:'#ef4444', academic:'#3b82f6', event:'#8b5cf6', exam:'#f59e0b' };
+
+    const upcoming = events
+        .map(e => ({ ...e, date: new Date(e.date + 'T00:00:00') }))
+        .filter(e => e.date >= today)
+        .sort((a, b) => a.date - b.date)
+        .slice(0, 6);
+
+    list.innerHTML = upcoming.length
+        ? upcoming.map(e => {
+            const cls = e.type === 'holiday' ? 'holiday-event' : e.type === 'exam' ? 'exam-event' : e.type === 'meeting' ? 'meeting-event' : 'school-event';
+            return `
+                <div class="event-item ${cls}">
+                    <div class="event-date">
+                        <span class="event-day">${e.date.getDate()}</span>
+                        <span class="event-month">${e.date.toLocaleString('en-US',{month:'short'}).toUpperCase()}</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>${e.title}</h4>
+                        <p>${e.date.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+                        ${e.description ? `<p style="font-size:0.75rem;color:var(--text-light);margin-top:0.2rem;">${e.description}</p>` : ''}
+                    </div>
+                    <span class="event-type ${e.type}" style="background:${typeColors[e.type]}22;color:${typeColors[e.type]}">${e.type.charAt(0).toUpperCase()+e.type.slice(1)}</span>
+                </div>`;
+        }).join('')
+        : '<div class="empty-state"><p>No upcoming events</p></div>';
+}
+
+// ===== PROFILE =====
+function loadProfile() {
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!currentUser) return;
+
+    const firstName = currentUser.first_name || '';
+    const lastName  = currentUser.last_name  || '';
+    const fullName  = `${firstName} ${lastName}`.trim();
+    const initials  = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
+    // Banner
+    const avatarEl = document.getElementById('profileAvatarXl');
+    const nameEl   = document.getElementById('profileFullName');
+    const roleEl   = document.getElementById('profileRole');
+    const empChip  = document.getElementById('profileEmpIdChip');
+    if (avatarEl) avatarEl.textContent = initials;
+    if (nameEl)   nameEl.textContent   = fullName;
+    if (roleEl)   roleEl.textContent   = currentUser.role === 'teacher' ? 'Teacher' : currentUser.role || 'Teacher';
+    if (empChip)  empChip.textContent  = currentUser.employee_id ? `Employee ID: ${currentUser.employee_id}` : 'SY 2026-2027';
+
+    // Personal info
+    document.getElementById('pFullName').textContent   = fullName || '—';
+    document.getElementById('pEmail').textContent      = currentUser.email || '—';
+    document.getElementById('pEmpId').textContent      = currentUser.employee_id || '—';
+    document.getElementById('pContact').textContent    = currentUser.contact || currentUser.phone || '—';
+    document.getElementById('pDepartment').textContent = currentUser.department || currentUser.strand || '—';
+
+    // Teaching info from sections
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const teacherName = fullName;
+    const assigned = allSections.filter(s => 
+    s.teacher === teacherName || 
+    (s.subject_teachers || []).some(t => t.teacher_id === currentUser.id || t.teacher === teacherName)
+);
+    const totalStudents = assigned.reduce((sum, s) => sum + (s.students || []).length, 0);
+
+    document.getElementById('pSections').textContent     = assigned.length
+        ? assigned.map(s => `${s.name} (Gr.${s.grade} ${s.strand})`).join(', ')
+        : 'No sections assigned';
+    document.getElementById('pTeachingLoad').textContent = `${assigned.length} Section${assigned.length !== 1 ? 's' : ''}`;
+    document.getElementById('pTotalStudents').textContent = `${totalStudents} Student${totalStudents !== 1 ? 's' : ''}`;
+
+    // Class performance from saved grades
+    const perfEl = document.getElementById('profilePerformance');
+    if (!perfEl) return;
+
+    if (!assigned.length) {
+        perfEl.innerHTML = `<div class="empty-state"><p>No sections assigned yet.</p></div>`;
+        return;
+    }
+
+    const rows = assigned.map(s => {
+        const key      = `section_${s.id}`;
+        const currentUser2 = JSON.parse(localStorage.getItem('loggedInUser'));
+        const subjectSlug2 = getTeacherSubjectForSection(currentUser2, key);
+        const saved    = JSON.parse(localStorage.getItem(`grades_${key}_${subjectSlug2}`) || '{}');
+        const students = s.students || [];
+
+        const averages = students.map(st => {
+            const g = saved[String(st.id)];
+            if (!g) return null;
+            const vals = [g.q1, g.q2, g.q3, g.q4]
+                .map(v => v !== '' && v !== undefined && v !== null ? parseFloat(v) : NaN)
+                .filter(v => !isNaN(v));
+            return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+        }).filter(v => v !== null);
+
+        const avg = averages.length
+            ? (averages.reduce((a, b) => a + b, 0) / averages.length).toFixed(1)
+            : null;
+
+        const label = `${s.name} — Gr.${s.grade} ${s.strand}`;
+        const displayAvg = avg ?? '—';
+        const pct = avg ? Math.min(parseFloat(avg), 100) : 0;
+
+        return `
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span class="progress-name">${label}</span>
+                    <span class="progress-val">${displayAvg}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:${pct}%"></div>
+                </div>
+            </div>`;
+    }).join('');
+
+    perfEl.innerHTML = rows || `<div class="empty-state"><p>No grade data available yet.</p></div>`;
+}
+
+// ===== MY SCHEDULE (Personal, per-teacher) =====
+const MY_SCHEDULE_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const MY_SCHEDULE_SLOTS = [
+    '7:00 - 8:00 AM', '8:00 - 9:00 AM', '9:00 - 10:00 AM',
+    '10:00 - 11:00 AM', '11:00 AM - 12:00 PM',
+    '12:00 - 1:00 PM (Lunch)', '1:00 - 2:00 PM',
+    '2:00 - 3:00 PM', '3:00 - 5:00 PM'
+];
+
+let scheduleEditMode = false;
+
+function getMyScheduleKey() {
+    const u = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    return `ffhnas_my_schedule_${u.id}`;
+}
+
+function loadMySchedule() {
+    return JSON.parse(localStorage.getItem(getMyScheduleKey()) || '{}');
+}
+
+function renderMySchedule() {
+    const area = document.getElementById('scheduleViewArea');
+    if (!area) return;
+    const saved = loadMySchedule();
+
+    if (scheduleEditMode) {
+        area.innerHTML = `
+            <div style="overflow-x:auto;">
+                <table class="schedule-tbl" style="min-width:700px;">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            ${MY_SCHEDULE_DAYS.map(d => `<th>${d}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${MY_SCHEDULE_SLOTS.map((slot, i) => {
+                            const isBreak = slot.toLowerCase().includes('lunch');
+                            if (isBreak) return `
+                                <tr style="background:#f8fafc;">
+                                    <td style="font-weight:600;color:var(--text-light);font-size:0.82rem;white-space:nowrap;">${slot}</td>
+                                    <td colspan="5" style="text-align:center;color:var(--text-light);font-size:0.82rem;font-style:italic;">Lunch Break</td>
+                                </tr>`;
+                            return `
+                                <tr>
+                                    <td style="font-weight:700;font-size:0.82rem;white-space:nowrap;">${slot}</td>
+                                    ${MY_SCHEDULE_DAYS.map(d => {
+                                        const val = (saved[slot] && saved[slot][d]) ? saved[slot][d] : '';
+                                        return `<td><input type="text" class="grade-input" style="width:100%;min-width:100px;" placeholder="e.g. Gen. Chemistry 1 · Rm 201" value="${val}" id="mysch_${i}_${d}"></td>`;
+                                    }).join('')}
+                                </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.75rem;">
+                <button class="btn-export" onclick="toggleScheduleEdit()">Cancel</button>
+                <button class="btn-submit-all" onclick="saveMySchedule()">💾 Save Schedule</button>
+            </div>`;
+    } else {
+        // View mode
+        const hasAnyData = MY_SCHEDULE_SLOTS.some(slot => 
+            MY_SCHEDULE_DAYS.some(d => saved[slot] && saved[slot][d])
+        );
+
+        if (!hasAnyData) {
+            area.innerHTML = `
+                <div style="padding:3rem;text-align:center;">
+                    <div style="font-size:2.5rem;margin-bottom:0.75rem;">📅</div>
+                    <p style="font-weight:600;color:var(--text);font-size:1rem;">No schedule set yet</p>
+                    <p style="font-size:0.875rem;color:var(--text-light);margin-top:0.25rem;">Click "Edit Schedule" to add your weekly timetable.</p>
+                </div>`;
+            return;
+        }
+
+        const colorMap = {};
+        const colors = ['chemistry', 'shelly', 'organic', 'spen'];
+        let colorIdx = 0;
+
+        area.innerHTML = `
+            <div style="overflow-x:auto;">
+                <table class="schedule-tbl" style="min-width:700px;">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            ${MY_SCHEDULE_DAYS.map(d => `<th>${d}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${MY_SCHEDULE_SLOTS.map(slot => {
+                            const isBreak = slot.toLowerCase().includes('lunch');
+                            if (isBreak) return `
+                                <tr>
+                                    <td style="font-weight:700;padding:0.75rem 1rem;white-space:nowrap;font-size:0.82rem;">${slot}</td>
+                                    <td colspan="5" class="break-cell">Lunch Break</td>
+                                </tr>`;
+                            return `
+                                <tr>
+                                    <td style="font-weight:700;padding:0.75rem 1rem;white-space:nowrap;font-size:0.82rem;">${slot}</td>
+                                    ${MY_SCHEDULE_DAYS.map(d => {
+                                        const val = saved[slot] && saved[slot][d];
+                                        if (!val) return `<td class="break-cell">—</td>`;
+                                        if (!colorMap[val]) { colorMap[val] = colors[colorIdx % colors.length]; colorIdx++; }
+                                        return `<td class="class-cell ${colorMap[val]}">${val}</td>`;
+                                    }).join('')}
+                                </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+    }
+}
+
+function toggleScheduleEdit() {
+    scheduleEditMode = !scheduleEditMode;
+    const btn = document.getElementById('scheduleEditBtn');
+    if (btn) btn.textContent = scheduleEditMode ? '✕ Cancel' : '✏️ Edit Schedule';
+    renderMySchedule();
+}
+
+function saveMySchedule() {
+    const schedule = {};
+    MY_SCHEDULE_SLOTS.forEach((slot, i) => {
+        if (slot.toLowerCase().includes('lunch')) return;
+        schedule[slot] = {};
+        MY_SCHEDULE_DAYS.forEach(d => {
+            const val = document.getElementById(`mysch_${i}_${d}`)?.value.trim() || '';
+            schedule[slot][d] = val;
+        });
+    });
+    localStorage.setItem(getMyScheduleKey(), JSON.stringify(schedule));
+    scheduleEditMode = false;
+    const btn = document.getElementById('scheduleEditBtn');
+    if (btn) btn.textContent = '✏️ Edit Schedule';
+    renderMySchedule();
+    showToast('Saved!', 'Your schedule has been updated.', 'success');
+}
+
+// ===== SECTION SCHEDULE MANAGEMENT =====
+
+
+
+function initScheduleEditor() {
+    const sel = document.getElementById('schedSectionSelector');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Select a section --</option>' +
+        mySections.map(s => `<option value="section_${s.id}">${s.name} (Gr.${s.grade} ${s.strand})</option>`).join('');
+}
+
+function loadScheduleEditor() {
+    const sectionKey = document.getElementById('schedSectionSelector')?.value;
+    const area = document.getElementById('scheduleEditorArea');
+    if (!area) return;
+    if (!sectionKey) { area.innerHTML = ''; return; }
+
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const sId = sectionKey.replace('section_', '');
+    const sec = allSections.find(x => String(x.id) === sId);
+    const grade = sec ? parseInt(sec.grade) : 11;
+
+    const defaultSlots = ['7:00 - 7:50 AM','7:50 - 8:40 AM','8:40 - 9:30 AM','9:30 - 9:50 AM (Break)','9:50 - 10:40 AM','10:40 - 11:30 AM','11:30 AM - 12:30 PM (Lunch)','12:30 - 1:20 PM','1:20 - 2:10 PM'];
+    const TIME_SLOTS = JSON.parse(localStorage.getItem(`ffhnas_timeslots_grade${grade}`) || 'null') || defaultSlots;
+
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const saved = JSON.parse(localStorage.getItem(`schedule_${sectionKey}`) || '{}');
+
+    area.innerHTML = `
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h3>Weekly Schedule Editor</h3>
+                <button class="btn-submit-all" onclick="saveSchedule('${sectionKey}', ${grade})">💾 Save Schedule</button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="portal-table" style="min-width:700px;">
+                    <thead>
+                        <tr>
+                            <th style="white-space:nowrap;">Time Slot</th>
+                            ${DAYS.map(d => `<th>${d}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${TIME_SLOTS.map((slot, i) => {
+                            const isBreak = slot.toLowerCase().includes('break') || slot.toLowerCase().includes('lunch');
+                            if (isBreak) {
+                                return `<tr style="background:#f8fafc;">
+                                    <td style="font-weight:600;color:var(--text-light);font-size:0.82rem;">${slot}</td>
+                                    <td colspan="5" style="text-align:center;color:var(--text-light);font-size:0.82rem;font-style:italic;">${slot.toLowerCase().includes('lunch') ? 'Lunch Break' : 'Break'}</td>
+                                </tr>`;
+                            }
+                            return `<tr>
+                                <td style="font-weight:600;font-size:0.82rem;white-space:nowrap;color:var(--dark);">${slot}</td>
+                                ${DAYS.map(d => {
+                                    const val = (saved[slot] && saved[slot][d]) ? saved[slot][d] : '';
+                                    return `<td><input type="text" class="grade-input" style="width:100%;min-width:90px;" placeholder="Subject / Activity" value="${val}" id="sched_${i}_${d}"></td>`;
+                                }).join('')}
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+}
+
+function saveSchedule(sectionKey, grade) {
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const sId = sectionKey.replace('section_', '');
+    const sec = allSections.find(x => String(x.id) === sId);
+    const resolvedGrade = grade || (sec ? parseInt(sec.grade) : 11);
+
+    const defaultSlots = ['7:00 - 7:50 AM','7:50 - 8:40 AM','8:40 - 9:30 AM','9:30 - 9:50 AM (Break)','9:50 - 10:40 AM','10:40 - 11:30 AM','11:30 AM - 12:30 PM (Lunch)','12:30 - 1:20 PM','1:20 - 2:10 PM'];
+    const TIME_SLOTS = JSON.parse(localStorage.getItem(`ffhnas_timeslots_grade${resolvedGrade}`) || 'null') || defaultSlots;
+
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const schedule = {};
+
+    TIME_SLOTS.forEach((slot, i) => {
+        const isBreak = slot.toLowerCase().includes('break') || slot.toLowerCase().includes('lunch');
+        if (isBreak) return;
+        schedule[slot] = {};
+        DAYS.forEach(d => {
+            const val = document.getElementById(`sched_${i}_${d}`)?.value.trim() || '';
+            schedule[slot][d] = val;
+        });
+    });
+
+    localStorage.setItem(`schedule_${sectionKey}`, JSON.stringify(schedule));
+    showToast('Saved!', 'Schedule saved. Students will see it in their portal.', 'success');
+}
+
+// ===== UTILITIES =====
+function toggleNotifications() {
+    showToast('Notifications', '3 new notifications pending.', 'info');
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('loggedInUser');
+        showToast('Logged Out', 'Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1000);
+    }
+}
+
+function showToast(title, message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const colors    = { success:'#10b981', error:'#ef4444', info:'#3b82f6' };
+    const toast     = document.createElement('div');
+    toast.style.cssText = `background:white;padding:1rem 1.5rem;border-radius:0.625rem;box-shadow:0 4px 20px rgba(0,0,0,0.12);margin-bottom:0.75rem;border-left:4px solid ${colors[type]};animation:slideIn 0.3s ease;min-width:280px;max-width:380px;`;
+    toast.innerHTML = `<strong style="display:block;margin-bottom:0.25rem;color:#1e293b;font-size:0.875rem;">${title}</strong><p style="margin:0;color:#64748b;font-size:0.82rem;">${message}</p>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.transition='0.3s'; toast.style.opacity='0'; toast.style.transform='translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 4000);
+}
+
+// ── MY SECTION (Teacher) ──
+
+function getTeacherSubjectForSection(currentUser, sectionKey) {
+    if (!currentUser) return 'unknown';
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    // sectionKey can be "section_123" or a raw id
+    const sectionId = String(sectionKey).replace('section_', '');
+    const s = allSections.find(x => String(x.id) === sectionId);
+    if (!s) return 'unknown';
+
+    // Check if this teacher is a subject teacher
+    const subjectTeacher = (s.subject_teachers || []).find(
+        t => t.teacher_id === currentUser.id || t.teacher === `${currentUser.first_name} ${currentUser.last_name}`
+    );
+    if (subjectTeacher) {
+        return (subjectTeacher.subject || 'unknown').toLowerCase().replace(/\s+/g, '_');
+    }
+
+    // Fallback: section's main teacher
+    return (s.subject || 'main').toLowerCase().replace(/\s+/g, '_');
+}
+
+function loadMySection() {
+    loadTeacherSections();
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const container = document.getElementById('mySectionContent');
+    if (!container) return;
+
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const allUsers = JSON.parse(localStorage.getItem('ffhnas_users') || '[]'); // fallback
+    
+    // Find section(s) assigned to this teacher
+    const teacherName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : '';
+    const mySections = allSections.filter(s => 
+    s.teacher === teacherName || 
+    (s.subject_teachers || []).some(t => t.teacher_id === currentUser.id || t.teacher === teacherName)
+);
+
+    if (!mySections.length) {
+        container.innerHTML = `
+            <div class="portal-card">
+                <div class="portal-card-body" style="padding:3rem;text-align:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-light);margin-bottom:1rem;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <p style="font-size:1rem;color:var(--text-light);font-weight:500;">You have not been assigned to any section yet.</p>
+                    <p style="font-size:0.875rem;color:var(--text-light);margin-top:0.5rem;">Please contact the administrator.</p>
+                </div>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = mySections.map(s => {
+        const students = s.students || [];
+        const rows = students.length
+            ? students.map(st => `
+                <tr>
+                    <td><strong>${st.name}</strong></td>
+                    <td>
+                        <button class="btn-assignment-delete" onclick="removeStudentFromMySection(${st.id}, ${s.id})" style="font-size:0.75rem;padding:0.25rem 0.625rem;">Remove</button>
+                    </td>
+                </tr>`).join('')
+            : `<tr><td colspan="2" style="text-align:center;padding:1.5rem;color:var(--text-light);">No students yet. Add students below.</td></tr>`;
+
+        return `
+            <div class="portal-card" style="margin-bottom:1.5rem;">
+                <div class="portal-card-header">
+                    <div>
+                       <h3>${s.name}</h3>
+<p style="font-size:0.875rem;color:var(--text-light);margin-top:0.125rem;">Grade ${s.grade} · ${s.strand} · ${students.length} students</p>
+<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.75rem;">
+    <label style="font-size:0.82rem;font-weight:600;color:var(--text-light);white-space:nowrap;">Subject:</label>
+    <input type="text" id="subjectInput_${s.id}" value="${s.subject || ''}" placeholder="e.g. General Chemistry 1"
+        style="flex:1;padding:0.4rem 0.75rem;border:1px solid var(--border);border-radius:0.5rem;font-size:0.875rem;outline:none;">
+    <button onclick="saveSubject(${s.id})" style="padding:0.4rem 0.875rem;background:var(--primary);color:white;border:none;border-radius:0.5rem;font-size:0.82rem;font-weight:600;cursor:pointer;">Save</button>
+</div>
+
+</div>
+                    <button class="btn-submit-all" onclick="openAddStudentToMySection(${s.id})" style="font-size:0.82rem;padding:0.5rem 1rem;">+ Add Student</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="portal-table">
+                        <thead><tr><th>Student Name</th><th>Action</th></tr></thead>
+                        <tbody id="mySectionStudentsTable_${s.id}">${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inline add student panel -->
+            <div id="addStudentPanel_${s.id}" style="display:none;" class="portal-card" style="margin-bottom:1.5rem;">
+                <div class="portal-card-header">
+                    <h3>Add Student to ${s.name}</h3>
+                    <button class="portal-link" onclick="document.getElementById('addStudentPanel_${s.id}').style.display='none'">Close</button>
+                </div>
+                <div style="padding:1rem;" id="addStudentPanelList_${s.id}">
+                    <div class="empty-state"><p>Loading students...</p></div>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function openAddStudentToMySection(sectionId) {
+    const panel = document.getElementById(`addStudentPanel_${sectionId}`);
+    if (!panel) return;
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    if (panel.style.display === 'block') renderAvailableStudentsForTeacher(sectionId);
+}
+
+async function renderAvailableStudentsForTeacher(sectionId) {
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const s = allSections.find(x => x.id === sectionId);
+    if (!s) return;
+
+    const listEl = document.getElementById(`addStudentPanelList_${sectionId}`);
+    if (!listEl) return;
+    listEl.innerHTML = `<div style="padding:1rem;color:var(--text-light);font-size:0.875rem;">Loading students...</div>`;
+
+    let allStudents = [];
+    try {
+        const res = await fetch('http://localhost/school/api/users.php');
+        const data = await res.json();
+        const users = data.success ? (data.users || data.data?.users || data.data || []) : [];
+        allStudents = users.filter(u => u.role === 'student');
+    } catch {
+        listEl.innerHTML = `<div style="padding:1rem;color:var(--danger);font-size:0.875rem;">Could not load students. Check server connection.</div>`;
+        return;
+    }
+
+    const enrolledIds = (s.students || []).map(x => String(x.id));
+    const available = allStudents.filter(u => !enrolledIds.includes(String(u.id)));
+
+    listEl.innerHTML = `
+        <div style="margin-bottom:0.875rem;">
+            <input type="text" id="teacherStudentSearch_${sectionId}" class="assign-input" placeholder="Search by name or email..." oninput="filterTeacherStudentList(${sectionId})" style="width:100%;">
+        </div>
+        <div id="teacherAvailableRows_${sectionId}" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:0.5rem;">
+            ${available.length
+                ? available.map(u => `
+                    <div class="teacher-student-row" data-name="${u.first_name} ${u.last_name}" data-email="${u.email}" style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 0.875rem;border-bottom:1px solid var(--border);">
+                        <div>
+                            <div style="font-weight:600;font-size:0.875rem;">${u.first_name} ${u.last_name}</div>
+                            <div style="font-size:0.75rem;color:var(--text-light);">${u.email}</div>
+                        </div>
+                        <button class="btn-assignment-action" onclick="teacherAddStudent(${u.id}, '${u.first_name} ${u.last_name}', ${sectionId})">+ Add</button>
+                    </div>`).join('')
+                : `<div style="padding:1.5rem;text-align:center;color:var(--text-light);font-size:0.875rem;">All registered students are already in this section.</div>`
+            }
+        </div>`;
+}
+
+function filterTeacherStudentList(sectionId) {
+    const q = document.getElementById(`teacherStudentSearch_${sectionId}`).value.toLowerCase();
+    document.querySelectorAll(`#teacherAvailableRows_${sectionId} .teacher-student-row`).forEach(row => {
+        const name = row.getAttribute('data-name').toLowerCase();
+        const email = row.getAttribute('data-email').toLowerCase();
+        row.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+    });
+}
+
+function teacherAddStudent(userId, name, sectionId) {
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const s = allSections.find(x => x.id === sectionId);
+    if (!s) return;
+    if (!s.students) s.students = [];
+    if (s.students.find(x => String(x.id) === String(userId))) { showToast('Info', 'Student already in section', 'info'); return; }
+    s.students.push({ id: userId, name });
+    localStorage.setItem('ffhnas_sections', JSON.stringify(allSections));
+    showToast('Added', `${name} added to ${s.name}`, 'success');
+    loadMySection();
+    renderAvailableStudentsForTeacher(sectionId);
+}
+
+function removeStudentFromMySection(studentId, sectionId) {
+    if (!confirm('Remove this student from the section?')) return;
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const s = allSections.find(x => x.id === sectionId);
+    if (!s) return;
+    s.students = (s.students || []).filter(x => x.id !== studentId);
+    localStorage.setItem('ffhnas_sections', JSON.stringify(allSections));
+    showToast('Removed', 'Student removed from section', 'success');
+    loadMySection();
+}
+
+function saveSubject(sectionId) {
+    const input = document.getElementById(`subjectInput_${sectionId}`);
+    const subject = input?.value.trim();
+    if (!subject) { showToast('Error', 'Please enter a subject name.', 'error'); return; }
+
+    const allSections = JSON.parse(localStorage.getItem('ffhnas_sections') || '[]');
+    const s = allSections.find(x => x.id === sectionId);
+    if (!s) return;
+    s.subject = subject;
+    localStorage.setItem('ffhnas_sections', JSON.stringify(allSections));
+    showToast('Saved!', `Subject "${subject}" saved for ${s.name}.`, 'success');
+}
+
+// ===== SETTINGS =====
+function loadTeacherSettings() {
+    const u = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    document.getElementById('settingsFirstName').value = u.first_name || '';
+    document.getElementById('settingsLastName').value  = u.last_name  || '';
+    document.getElementById('settingsEmail').value     = u.email      || '';
+}
+
+function saveTeacherProfile() {
+    const u = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+    const first = document.getElementById('settingsFirstName').value.trim();
+    const last  = document.getElementById('settingsLastName').value.trim();
+    const email = document.getElementById('settingsEmail').value.trim();
+    if (!first || !last || !email) { showToast('Error', 'Please fill in all fields.', 'error'); return; }
+    u.first_name = first;
+    u.last_name  = last;
+    u.email      = email;
+    localStorage.setItem('loggedInUser', JSON.stringify(u));
+
+    // Update header display
+    const headerName = document.getElementById('headerName');
+    const headerAvatar = document.getElementById('headerAvatar');
+    if (headerName) headerName.textContent = `${first} ${last}`;
+    if (headerAvatar) headerAvatar.textContent = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+
+    showToast('Saved!', 'Profile updated successfully.', 'success');
+}
+
+async function updateTeacherPassword() {
+    const currentPw = document.getElementById('settingsCurrentPw').value;
+    const newPw     = document.getElementById('settingsNewPw').value;
+    const confirmPw = document.getElementById('settingsConfirmPw').value;
+    if (!currentPw || !newPw || !confirmPw) { showToast('Error', 'Please fill in all password fields.', 'error'); return; }
+    if (newPw !== confirmPw) { showToast('Error', 'New passwords do not match.', 'error'); return; }
+    if (newPw.length < 6)   { showToast('Error', 'Password must be at least 6 characters.', 'error'); return; }
+
+    const u = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+
+    try {
+        const res = await fetch('http://localhost/school/api/change_password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: u.id, current_password: currentPw, new_password: newPw })
+        });
+        const data = await res.json();
+        if (data.success) {
+            u.password = newPw;
+            localStorage.setItem('loggedInUser', JSON.stringify(u));
+            document.getElementById('settingsCurrentPw').value = '';
+            document.getElementById('settingsNewPw').value     = '';
+            document.getElementById('settingsConfirmPw').value = '';
+            showToast('Updated!', 'Password changed successfully.', 'success');
+        } else {
+            showToast('Error', data.message || 'Current password is incorrect.', 'error');
+        }
+    } catch {
+        // Fallback: localStorage-only check
+        if (u.password && u.password !== currentPw) { showToast('Error', 'Current password is incorrect.', 'error'); return; }
+        u.password = newPw;
+        localStorage.setItem('loggedInUser', JSON.stringify(u));
+        document.getElementById('settingsCurrentPw').value = '';
+        document.getElementById('settingsNewPw').value     = '';
+        document.getElementById('settingsConfirmPw').value = '';
+        showToast('Updated!', 'Password changed successfully.', 'success');
+    }
+}
+
+</script>
+</body>
+</html>
